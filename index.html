@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>日めくり受験数学</title>
+<meta name="theme-color" content="#1d3a8a">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{--navy:#1d3a8a;--navy2:#2b50b0;--red:#d33a2c;--bg:#f4f6fb;--card:#fff;--ink:#1c2333;--mut:#6b7690;--ok:#1e9e62;--ng:#d33a2c;--line:#dde3f0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:5}
+header .t{font-size:19px;font-weight:800;letter-spacing:.02em}
+header .s{font-size:12px;opacity:.85;margin-top:2px}
+main{max-width:640px;margin:0 auto;padding:14px 12px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(20,30,70,.05)}
+.count{display:flex;align-items:center;gap:12px}
+.count .num{font-size:40px;font-weight:900;color:var(--red);line-height:1}
+.count .lab{font-size:13px;color:var(--mut)}
+.btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;background:var(--navy);color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin:8px 0}
+.btn.sub{background:#e8edf9;color:var(--navy)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn.red{background:var(--red)}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:8px}.row>*{flex:1}
+h2{font-size:16px;margin:2px 0 10px}
+h3{font-size:14px;margin:14px 0 6px;color:var(--navy)}
+.unit{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.unit:last-child{border-bottom:none}
+.unit .nm{flex:0 0 42%;font-size:14.5px;font-weight:600}
+.unit .gr{font-size:10px;color:#fff;background:#8fa1c9;border-radius:6px;padding:1px 5px;margin-left:5px;vertical-align:1px}
+.bar{flex:1;height:10px;background:#edf0f7;border-radius:5px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ok)}
+.bar>i.mid{background:#e8a13a}.bar>i.low{background:var(--ng)}
+.unit .pc{flex:0 0 74px;text-align:right;font-size:12.5px;color:var(--mut)}
+.q{font-size:18px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.q .fig{font-size:14px;color:var(--mut)}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:#e8edf9;color:var(--navy);margin-right:6px}
+.tag.lv{background:#fdeceb;color:var(--red)}
+.tag.rv{background:#fff3d6;color:#9a6a00}
+input.ans{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:10px;font-size:17px;margin:5px 0}
+.fld{display:flex;align-items:center;gap:8px;margin:4px 0}
+.fld label{flex:0 0 64px;font-size:14px;font-weight:600}
+.fld input{flex:1}
+.hintbox{background:#fffbe8;border:1px solid #f0e0a0;border-radius:10px;padding:10px 12px;font-size:14.5px;line-height:1.7;margin:8px 0;display:none}
+.explbox{background:#eef7f1;border:1px solid #bfe3cd;border-radius:10px;padding:10px 12px;font-size:14.5px;line-height:1.8;margin:8px 0;display:none;white-space:pre-wrap}
+.ansbox{background:#fdeceb;border:1px solid #f3c2bd;border-radius:10px;padding:10px 12px;font-size:15px;margin:8px 0;display:none}
+.fb{font-size:17px;font-weight:800;margin:10px 0}
+.fb.ok{color:var(--ok)}.fb.ng{color:var(--ng)}
+.small{font-size:12.5px;color:var(--mut);line-height:1.7}
+select,input[type=date]{padding:10px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;width:100%;margin:5px 0;background:#fff}
+.seg{display:flex;gap:6px;margin:6px 0}
+.seg button{flex:1;padding:9px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.timer{font-size:22px;font-weight:900;color:var(--red);text-align:center}
+.prog{height:8px;background:#edf0f7;border-radius:4px;overflow:hidden;margin:8px 0}
+.prog>i{display:block;height:100%;background:var(--navy2)}
+.mk{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.mk .due{font-size:12px;font-weight:700;color:var(--ng)}
+.mk .due.wait{color:var(--mut)}
+.nav{display:flex;gap:6px;margin-bottom:12px}
+.nav button{flex:1;padding:9px 2px;border:1px solid var(--line);background:#fff;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer}
+.nav button.on{background:var(--navy);color:#fff}
+.hidden{display:none}
+table.hist{width:100%;border-collapse:collapse;font-size:13px}
+table.hist td,table.hist th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+/* ---- math typesetting ---- */
+.mv{font-family:"Times New Roman","Hiragino Mincho ProN",serif;font-style:italic}
+sup{font-size:.68em;line-height:0}
+.frac{display:inline-block;vertical-align:-0.45em;text-align:center;margin:0 .12em}
+.frac .fn{display:block;padding:0 .28em;line-height:1.25;font-size:.92em}
+.frac .fd{display:block;padding:0 .28em;line-height:1.25;font-size:.92em;border-top:1.6px solid currentColor}
+.rad{display:inline-block}
+.rad .rb{border-top:1.6px solid currentColor;padding:0 .08em 0 .02em}
+.figwrap{background:#fbfcff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0;text-align:center}
+.figwrap svg{max-width:100%;height:auto}
+.syswrap{display:flex;align-items:center;gap:6px;margin:10px 0}
+.sysbrace{font-family:"Times New Roman",serif;font-size:56px;line-height:1;transform:scaleY(1.55);font-weight:300;color:var(--ink)}
+.syslines{font-size:18px;line-height:1.9}
+</style>
+</head>
+<body>
+<header>
+  <div class="t">日めくり受験数学</div>
+  <div class="s">高校入試対策 ・ 1日少しずつ、弱点をなくそう</div>
+</header>
+<main id="app"><div class="card"><h2>読み込み中…</h2><p class="small">この表示がずっと続く場合は、表示しているアプリ（チャットのプレビューなど）がスクリプトの実行を制限している可能性があります。その場合は、Safari や Chrome でこのファイルを開くか、公開ページのURLから開いてください。</p></div></main>
+<script>
+window.__jukenBooted=false;
+window.addEventListener("error",function(e){
+  if(window.__jukenBooted)return;
+  var el=document.getElementById("app");
+  if(el){ el.innerHTML='<div class="card"><h2>アプリを起動できませんでした</h2><p>この表示環境では、スクリプトや保存機能（localStorage）が制限されている可能性があります。</p><p>Safari や Chrome でファイルを開くか、公開ページのURLから開いてみてください。</p><p class="small">詳細: '+String(e.message||"不明なエラー")+'</p></div>'; }
+});
+</script>
+<script>
+"use strict";
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s);
+const RI=(a,b)=>a+Math.floor(Math.random()*(b-a+1));       // random int
+const NZ=(a,b)=>{let v=0;while(v===0)v=RI(a,b);return v;};  // nonzero int
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+function fracStr(n,d){ if(d<0){n=-n;d=-d;} const g=gcd(n,d); n/=g; d/=g; return d===1?String(n):n+"/"+d; }
+function parseNum(s){ if(s==null) return NaN; s=String(s).trim().replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/－/g,"-").replace(/．/g,".").replace(/\s+/g,"");
+  if(s==="") return NaN;
+  if(/^[-+]?\d+\/\d+$/.test(s)){ const [a,b]=s.split("/").map(Number); return b===0?NaN:a/b; }
+  const v=Number(s); return isNaN(v)?NaN:v; }
+function eqNum(a,b){ return isFinite(a)&&isFinite(b)&&Math.abs(a-b)<1e-6; }
+const todayStr=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function addDays(ds,n){ const d=new Date(ds+"T00:00:00"); d.setDate(d.getDate()+n); return todayStr(d); }
+function daysBetween(a,b){ return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+const SUP={"2":"²","3":"³"};
+function sup(n){ return String(n).split("").map(c=>SUP[c]||c).join(""); }
+/* ============ rich text (math typesetting) ============ */
+/* markup: \f{num}{den} stacked fraction, \r{...} radical, ^{...} superscript.
+   Also auto-converts literal ²/³ and √<digits/letter>. Latin letter runs (except "cm") become serif italic. */
+function ital(s){ return s.replace(/[A-Za-z]+/g, m => m==="cm" ? m : `<i class="mv">${m}</i>`); }
+function rich(text){
+  const parts = String(text).split(/(\\f\{[^{}]*\}\{[^{}]*\}|\\q\{[^{}]*\}\{[^{}]*\}|\\r\{[^{}]*\}|\^\{[^{}]*\})/g);
+  return parts.map(seg => {
+    let m;
+    if(m = seg.match(/^\\f\{([^{}]*)\}\{([^{}]*)\}$/))
+      return `<span class="frac"><span class="fn">${ital(esc(m[1]))}</span><span class="fd">${ital(esc(m[2]))}</span></span>`;
+    if(m = seg.match(/^\\q\{([^{}]*)\}\{([^{}]*)\}$/))
+      return `<span class="frac"><span class="fn">${ital(esc(m[1]))}</span><span class="fd">√<span class="rb">${ital(esc(m[2]))}</span></span></span>`;
+    if(m = seg.match(/^\\r\{([^{}]*)\}$/))
+      return `<span class="rad">√<span class="rb">${ital(esc(m[1]))}</span></span>`;
+    if(m = seg.match(/^\^\{([^{}]*)\}$/))
+      return `<sup>${ital(esc(m[1]))}</sup>`;
+    let s = esc(seg);
+    s = ital(s);
+    s = s.replace(/√([0-9]+)/g, '<span class="rad">√<span class="rb">$1</span></span>');
+    s = s.replace(/²/g, "<sup>2</sup>").replace(/³/g, "<sup>3</sup>");
+    return s;
+  }).join("");
+}
+/* ============ SVG figure helpers ============ */
+function svgWrap(w, h, inner){ return `<svg viewBox="0 0 ${w} ${h}" width="${Math.min(w,440)}" role="img" aria-label="図">${inner}</svg>`; }
+function svgText(x, y, str, opt){ const o=opt||{}; return `<text x="${x}" y="${y}" font-size="${o.size||14}" fill="${o.color||"#1c2333"}" text-anchor="${o.anchor||"middle"}" font-family="${o.serif?"'Times New Roman',serif":"inherit"}" ${o.italic?'font-style="italic"':""} font-weight="${o.bold?700:400}">${str}</text>`; }
+/* graph paper: returns {svg parts, X(x), Y(y)} for range [xmin,xmax]x[ymin,ymax] */
+function graphSVG(xmin, xmax, ymin, ymax, draw, opt){
+  const W=340, H=300, L=34, R=12, T=12, B=30;
+  const X=x=>L+(x-xmin)/(xmax-xmin)*(W-L-R), Y=y=>H-B-(y-ymin)/(ymax-ymin)*(H-T-B);
+  let g="";
+  for(let gx=Math.ceil(xmin); gx<=xmax; gx++) g+=`<line x1="${X(gx)}" y1="${Y(ymin)}" x2="${X(gx)}" y2="${Y(ymax)}" stroke="#e6ebf5" stroke-width="1"/>`;
+  for(let gy=Math.ceil(ymin); gy<=ymax; gy++) g+=`<line x1="${X(xmin)}" y1="${Y(gy)}" x2="${X(xmax)}" y2="${Y(gy)}" stroke="#e6ebf5" stroke-width="1"/>`;
+  g=`<line x1="${X(xmin)}" y1="${Y(0)}" x2="${X(xmax)}" y2="${Y(0)}" stroke="#5a6a8c" stroke-width="1.6"/>`
+   +`<line x1="${X(0)}" y1="${Y(ymin)}" x2="${X(0)}" y2="${Y(ymax)}" stroke="#5a6a8c" stroke-width="1.6"/>`
+   +`<path d="M ${X(xmax)} ${Y(0)} l -7 -3.5 v 7 z" fill="#5a6a8c"/><path d="M ${X(0)} ${Y(ymax)} l -3.5 7 h 7 z" fill="#5a6a8c"/>` + g;
+  g+=svgText(X(xmax)-4, Y(0)-6, "x", {serif:1, italic:1, size:14}) + svgText(X(0)+10, Y(ymax)+4, "y", {serif:1, italic:1, size:14}) + svgText(X(0)-8, Y(0)+14, "O", {serif:1, italic:1, size:12});
+  const step=(opt&&opt.step)||1;
+  for(let gx=Math.ceil(xmin/step)*step; gx<=xmax; gx+=step){ if(gx===0)continue; g+=svgText(X(gx), Y(0)+16, String(gx), {size:10, color:"#6b7690"}); }
+  for(let gy=Math.ceil(ymin/step)*step; gy<=ymax; gy+=step){ if(gy===0)continue; g+=svgText(X(0)-8, Y(gy)+3, String(gy), {size:10, color:"#6b7690", anchor:"end"}); }
+  g+=draw(X, Y);
+  return svgWrap(W, H, g); }
+/* plain triangle figure: pts [[x,y,label,labelDx,labelDy]...] in a 320x240 box, edges with optional mid labels, optional right-angle at vertex idx */
+function triSVG(pts, edgeLabels, opt){
+  const o=opt||{};
+  const P=pts.map(p=>[p[0],p[1]]);
+  let g=`<polygon points="${P.map(p=>p.join(",")).join(" ")}" fill="${o.fill||"#eef3ff"}" stroke="#1d3a8a" stroke-width="2"/>`;
+  if(o.extra) g+=o.extra(P);
+  (edgeLabels||[]).forEach((e,i)=>{ if(e==null)return; const a=P[i], b=P[(i+1)%P.length];
+    g+=svgText((a[0]+b[0])/2+(e.dx||0), (a[1]+b[1])/2+(e.dy||0), e.t, {size:13, bold:1}); });
+  if(o.rightAngle!=null){ const v=P[o.rightAngle], a=P[(o.rightAngle+1)%P.length], b=P[(o.rightAngle+2)%P.length];
+    const u1=[(a[0]-v[0]),(a[1]-v[1])], u2=[(b[0]-v[0]),(b[1]-v[1])];
+    const l1=Math.hypot(u1[0],u1[1]), l2=Math.hypot(u2[0],u2[1]); const s=14;
+    const p1=[v[0]+u1[0]/l1*s, v[1]+u1[1]/l1*s], p2=[p1[0]+u2[0]/l2*s, p1[1]+u2[1]/l2*s], p3=[v[0]+u2[0]/l2*s, v[1]+u2[1]/l2*s];
+    g+=`<path d="M ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]} L ${p3[0]} ${p3[1]}" fill="none" stroke="#1d3a8a" stroke-width="1.4"/>`; }
+  pts.forEach(p=>{ g+=svgText(p[0]+(p[3]||0), p[1]+(p[4]||0), p[2], {serif:1, italic:1, size:15, bold:1}); });
+  return svgWrap(320, 240, g); }
+/* ============ state ============ */
+const LSKEY="juken_math_v1";
+let S;
+function freshState(){ return { examDate:"", stats:{}, mistakes:[], daily:null, hist:[], totalDays:0 }; }
+function load(){ try{ S=JSON.parse(localStorage.getItem(LSKEY))||freshState(); }catch(e){ S=freshState(); }
+  if(!S.stats)S.stats={}; if(!S.mistakes)S.mistakes=[]; if(!S.hist)S.hist=[]; }
+function save(){ try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){ /* 保存できない環境（プレビュー等）でも動作は続ける */ } }
+function stat(u){ if(!S.stats[u])S.stats[u]={n:0,c:0}; return S.stats[u]; }
+function acc(u){ const s=S.stats[u]; if(!s||!s.n) return null; return s.c/s.n; }
+/* ============ units ============ */
+const UNITS=[
+ {id:"signed", g:1, name:"正負の数"},
+ {id:"moji", g:1, name:"文字式"},
+ {id:"lin_eq", g:1, name:"一次方程式"},
+ {id:"prop", g:1, name:"比例・反比例"},
+ {id:"poly", g:2, name:"式の計算"},
+ {id:"simul", g:2, name:"連立方程式"},
+ {id:"lin_fn", g:2, name:"一次関数"},
+ {id:"prob", g:2, name:"確率"},
+ {id:"expand", g:3, name:"展開・因数分解"},
+ {id:"sqrt", g:3, name:"平方根"},
+ {id:"quad_eq", g:3, name:"二次方程式"},
+ {id:"quad_fn", g:3, name:"関数 y=ax²"},
+ {id:"similar", g:3, name:"相似"},
+ {id:"pyth", g:3, name:"三平方の定理"},
+ {id:"circle", g:3, name:"円"},
+ {id:"data", g:3, name:"データの活用"},
+];
+const UMAP={}; UNITS.forEach(u=>UMAP[u.id]=u);
+/* circle figure for central/inscribed angle problems: central label & inscribed label as args */
+function circleFigInscribed(centralLabel, inscribedLabel){
+  const O=[160,125], r=88, pt=dg=>[O[0]+r*Math.cos(dg*Math.PI/180), O[1]+r*Math.sin(dg*Math.PI/180)];
+  const p1=pt(150), p2=pt(30), P=pt(270);
+  return svgWrap(320,250,`
+    <circle cx="${O[0]}" cy="${O[1]}" r="${r}" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+    <line x1="${O[0]}" y1="${O[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="#1d3a8a" stroke-width="2"/>
+    <line x1="${O[0]}" y1="${O[1]}" x2="${p2[0]}" y2="${p2[1]}" stroke="#1d3a8a" stroke-width="2"/>
+    <line x1="${P[0]}" y1="${P[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="#d33a2c" stroke-width="2"/>
+    <line x1="${P[0]}" y1="${P[1]}" x2="${p2[0]}" y2="${p2[1]}" stroke="#d33a2c" stroke-width="2"/>
+    <circle cx="${O[0]}" cy="${O[1]}" r="3.5" fill="#1c2333"/>
+    ${svgText(O[0]-13, O[1]+5, "O", {serif:1, italic:1, size:13, bold:1})}
+    ${svgText(O[0], O[1]+42, centralLabel, {size:14, bold:1})}
+    ${svgText(P[0], P[1]-10, inscribedLabel, {size:14, bold:1, color:"#d33a2c"})}`);
+}
+/* ============ problem generators (all original; answers computed from parameters) ============ */
+function F(k,label,ans){ return {k,label,ans}; }
+function P(unit,level,q,fields,hints,expl,opt){ const o={unit,level,q,fields,hints,expl}; if(opt){ if(opt.pair)o.pair=1; if(opt.fig)o.fig=opt.fig; if(opt.sys)o.sysLines=opt.sys; } return o; }
+const GEN={
+signed(L){
+  if(L===1){ const a=NZ(-20,20), b=NZ(-20,20); const minus=Math.random()<0.5;
+    const v=minus?a-b:a+b;
+    return P("signed",1,`次の計算をせよ。\n${a} ${minus?"−":"+"} ${b<0?"("+b+")":b}`,[F("v","答え",v)],
+      ["符号に注意して、たし算・ひき算のルールを使おう。","負の数をひくと、符号が変わるよ。"],
+      `${a} ${minus?"−":"+"} ${b<0?"("+b+")":b} = ${v}`); }
+  if(L===2){ const mul=Math.random()<0.5;
+    if(mul){ const a=NZ(-12,12), b=NZ(-12,12); return P("signed",2,`次の計算をせよ。\n(${a}) × (${b})`,[F("v","答え",a*b)],
+      ["符号の決め方：負×負は正、負×正は負。","まず符号を決めてから、数の計算をしよう。"],
+      `(${a}) × (${b}) = ${a*b}`); }
+    const b=NZ(-12,12); const q0=NZ(-12,12); const a=b*q0;
+    return P("signed",2,`次の計算をせよ。\n(${a}) ÷ (${b})`,[F("v","答え",q0)],
+      ["わり算も、符号のルールはかけ算と同じ。","何に何をかけると "+a+" になるか考えよう。"],
+      `(${a}) ÷ (${b}) = ${q0}`); }
+  if(L===3){ const a=RI(2,6); const cube=Math.random()<0.5; const v=cube?-(a*a*a):a*a; const e=cube?3:2;
+    const base=cube?-a:-a;
+    return P("signed",3,`次の計算をせよ。\n(${base})^{${e}}`,[F("v","答え",v)],
+      ["累乗は、同じ数をくり返しかけること。","指数が偶数なら結果は正、奇数なら負のまま。"],
+      `(${base})^{${e}} = ${v}`); }
+  const b=NZ(-9,9), c=NZ(-9,9), d=NZ(-9,9); const a=RI(-15,15); const v=a+b*c-d;
+  return P("signed",4,`次の計算をせよ。\n${a} + (${b}) × (${c}) − (${d})`,[F("v","答え",v)],
+    ["計算の順序：かけ算・わり算を先に、たし算・ひき算は後。","まず ("+b+") × ("+c+") = "+(b*c)+" を計算しよう。"],
+    `${a} + (${b}) × (${c}) − (${d})\n= ${a} + ${b*c} − ${d}\n= ${v}`);
+},
+moji(L){
+  if(L===1){ const a=NZ(-9,9), b=RI(-15,15), n=NZ(-6,6); const v=a*n+b;
+    return P("moji",1,`x = ${n} のとき、次の式の値を求めよ。\n${a}x ${b<0?"− "+Math.abs(b):"+ "+b}`,[F("v","答え",v)],
+      ["式の値を求めるときは、文字に数を代入する。",`${a} × (${n}) ${b<0?"− "+Math.abs(b):"+ "+b} を計算しよう。`],
+      `${a} × (${n}) ${b<0?"− "+Math.abs(b):"+ "+b} = ${v}`); }
+  if(L===2){ const a=NZ(-9,9), c=NZ(-9,9), b=RI(-15,15), d=RI(-15,15);
+    return P("moji",2,`次の式を簡単にせよ。答えは (係数)x + (定数) の形で答えよ。\n${a}x ${b<0?"− "+Math.abs(b):"+ "+b} ${c<0?"− "+Math.abs(c):"+ "+c}x ${d<0?"− "+Math.abs(d):"+ "+d}`,
+      [F("c1","x の係数",a+c), F("c2","定数項",b+d)],
+      ["x の項どうし、数の項どうしをまとめる。","x の係数は "+a+" と "+c+" の合計。"],
+      `x の項: ${a}x + ${c}x = ${a+c}x\n数の項: ${b} + ${d} = ${b+d}\n答え: ${a+c}x ${b+d<0?"− "+Math.abs(b+d):"+ "+(b+d)}`); }
+  if(L===3){ const a=NZ(-8,8), b=NZ(-9,9), c=RI(-12,12);
+    return P("moji",3,`次の式を展開せよ。答えは (係数)x + (定数) の形で答えよ。\n${a}(${b}x ${c<0?"− "+Math.abs(c):"+ "+c})`,
+      [F("c1","x の係数",a*b), F("c2","定数項",a*c)],
+      ["分配法則：かっこの外の数を、中の各項にかける。",`${a} × ${b}x と ${a} × (${c}) をそれぞれ計算しよう。`],
+      `${a} × ${b}x = ${a*b}x\n${a} × (${c}) = ${a*c}\n答え: ${a*b}x ${a*c<0?"− "+Math.abs(a*c):"+ "+(a*c)}`); }
+  const b0=pick([2,3,4,5]); const t=NZ(-8,8); const a=RI(-12,12); const x=b0*t-a;
+  return P("moji",4,`x = ${x} のとき、次の式の値を求めよ。\n(x ${a<0?"− "+Math.abs(a):"+ "+a}) ÷ ${b0}`,[F("v","答え",t)],
+    ["かっこの中を先に計算してから、わり算をする。",`x ${a<0?"− "+Math.abs(a):"+ "+a} = ${x} ${a<0?"− "+Math.abs(a):"+ "+a} = ${b0*t}。これを ${b0} でわろう。`],
+    `(${x} ${a<0?"− "+Math.abs(a):"+ "+a}) ÷ ${b0} = ${b0*t} ÷ ${b0} = ${t}`);
+},
+lin_eq(L){
+  const x0=NZ(-9,9);
+  if(L===1){ const a=NZ(-15,15); const b=x0+a;
+    return P("lin_eq",1,`次の方程式を解け。\nx ${a<0?"− "+Math.abs(a):"+ "+a} = ${b}`,[F("x","x",x0)],
+      ["移項：左辺の数を右辺へ移すと、符号が変わる。",`x = ${b} ${a<0?"+ "+Math.abs(a):"− "+a} を計算しよう。`],
+      `x ${a<0?"− "+Math.abs(a):"+ "+a} = ${b}\nx = ${b} ${a<0?"+ "+Math.abs(a):"− "+a} = ${x0}`); }
+  if(L===2){ const a=NZ(-9,9); const b=RI(-15,15); const c=a*x0+b;
+    return P("lin_eq",2,`次の方程式を解け。\n${a}x ${b<0?"− "+Math.abs(b):"+ "+b} = ${c}`,[F("x","x",x0)],
+      ["まず定数項を移項して、"+a+"x = □ の形にしよう。","最後に両辺を x の係数でわる。"],
+      `${a}x ${b<0?"− "+Math.abs(b):"+ "+b} = ${c}\n${a}x = ${c} ${b<0?"+ "+Math.abs(b):"− "+b} = ${a*x0}\nx = ${x0}`); }
+  if(L===3){ const a=NZ(-8,8); const b=RI(-9,9); const c=a*(x0+b);
+    return P("lin_eq",3,`次の方程式を解け。\n${a}(x ${b<0?"− "+Math.abs(b):"+ "+b}) = ${c}`,[F("x","x",x0)],
+      ["かっこがあるときは、先に両辺を "+a+" でわると楽なことが多い。",`x ${b<0?"− "+Math.abs(b):"+ "+b} = ${c} ÷ ${a} = ${x0+b}。あとは移項だけ。`],
+      `${a}(x ${b<0?"− "+Math.abs(b):"+ "+b}) = ${c}\nx ${b<0?"− "+Math.abs(b):"+ "+b} = ${x0+b}\nx = ${x0}`); }
+  const a=pick([2,3,4,5,6]); const x1=a*RI(-4,4)||a*2; const b=RI(-9,9); const c=x1/a+b;
+  return P("lin_eq",4,`次の方程式を解け。\n\\f{x}{${a}} ${b<0?"− "+Math.abs(b):"+ "+b} = ${c}`,[F("x","x",x1)],
+    ["分数があるときは、両辺に "+a+" をかけると整数の式になる。",`まず ${b} を移項して、\\f{x}{${a}} = ${c} ${b<0?"+ "+Math.abs(b):"− "+b} = ${x1/a}。`],
+    `\\f{x}{${a}} ${b<0?"− "+Math.abs(b):"+ "+b} = ${c}\n\\f{x}{${a}} = ${x1/a}\nx = ${x1}`);
+},
+prop(L){
+  if(L===1){ const a=NZ(-6,6), n=RI(2,9);
+    return P("prop",1,`y は x に比例し、y = ${a}x である。x = ${n} のときの y の値を求めよ。`,[F("v","y",a*n)],
+      ["比例の式に、x の値を代入する。",`y = ${a} × ${n} を計算しよう。`],
+      `y = ${a} × ${n} = ${a*n}`); }
+  if(L===2){ const y0=NZ(-9,9); const x0=pick([2,3,4,5,6]); const a=x0*y0; const what=Math.random()<0.5;
+    if(what) return P("prop",2,`y は x に反比例し、y = \\f{${a}}{x} である。x = ${x0} のときの y の値を求めよ。`,[F("v","y",y0)],
+      ["反比例では、x × y がいつも一定（= "+a+"）。",`${a} ÷ ${x0} を計算しよう。`],
+      `y = ${a} ÷ ${x0} = ${y0}`);
+    const xq=a/y0;
+    return P("prop",2,`y は x に反比例し、y = \\f{${a}}{x} である。y = ${y0} のときの x の値を求めよ。`,[F("v","x",xq)],
+      ["反比例では、x × y = "+a+" が成り立つ。",`x = ${a} ÷ ${y0} を計算しよう。`],
+      `x × ${y0} = ${a}\nx = ${a} ÷ ${y0} = ${xq}`); }
+  if(L===3){ const a=NZ(-6,6); const p=NZ(-5,5); const q=a*p; const n=RI(2,8);
+    return P("prop",3,`y は x に比例し、x = ${p} のとき y = ${q} である。x = ${n} のときの y の値を求めよ。`,[F("v","y",a*n)],
+      ["まず比例定数 a を求める：q = a × p の形に代入。",`比例定数は ${q} ÷ ${p} = ${a}。式は y = ${a}x。`],
+      `${q} = a × ${p} より a = ${a}\ny = ${a} × ${n} = ${a*n}`); }
+  const a=pick([12,18,24,30,36,40,48,60]); const m=pick([4,5,6,8,10,12]); const b0=pick([3,4,5,6,8,10,12,15,20]); const v=a*m/b0;
+  if(Number.isInteger(v)) return P("prop",4,`水そうに毎分 ${a} L ずつ水を入れると、満水まで ${m} 分かかる。毎分 ${b0} L ずつ入れると、満水まで何分かかるか。`,[F("v","答え（分）",v)],
+    ["水そうの容量は変わらない。量×時間 が一定＝反比例。",`容量は ${a} × ${m} = ${a*m} L。${a*m} ÷ ${b0} を計算しよう。`],
+    `容量: ${a} × ${m} = ${a*m} L\n${a*m} ÷ ${b0} = ${v} 分`);
+  return GEN.prop(4);
+},
+poly(L){
+  if(L===1){ const a=NZ(-9,9), b=NZ(-9,9), m=RI(1,3), n=RI(1,3);
+    return P("poly",1,`次の計算をせよ。係数と、x の指数を答えよ。\n(${a}x^{${m}}) × (${b}x^{${n}})`,
+      [F("c1","係数",a*b), F("c2","指数",m+n)],
+      ["係数どうし、文字どうしを分けてかける。","x の指数は、たし算になる。"],
+      `係数: ${a} × ${b} = ${a*b}\n指数: ${m} + ${n} = ${m+n}\n答え: ${a*b}x^{${m+n}}`); }
+  if(L===2){ const a=NZ(-9,9), c=NZ(-9,9), b=RI(-15,15), d=RI(-15,15); const sub2=Math.random()<0.5;
+    const cc=sub2?-c:c, dd=sub2?-d:d;
+    return P("poly",2,`次の計算をせよ。答えは (係数)x + (定数) の形で答えよ。\n(${a}x ${b<0?"− "+Math.abs(b):"+ "+b}) ${sub2?"−":"+"} (${c}x ${d<0?"− "+Math.abs(d):"+ "+d})`,
+      [F("c1","x の係数",a+cc), F("c2","定数項",b+dd)],
+      [sub2?"ひき算のときは、後ろのかっこの符号が全部変わる。":"同類項どうしをまとめよう。","x の項と数の項を別々に計算する。"],
+      `x の項: ${a}x ${cc<0?"− "+Math.abs(cc)+"x":"+ "+cc+"x"} = ${a+cc}x\n数の項: ${b} ${dd<0?"− "+Math.abs(dd):"+ "+dd} = ${b+dd}`); }
+  if(L===3){ const a=NZ(-8,8), b=RI(-12,12), n=NZ(-5,5); const v=n*n+a*n+b;
+    return P("poly",3,`x = ${n} のとき、次の式の値を求めよ。\nx² ${a<0?"− "+Math.abs(a):"+ "+a}x ${b<0?"− "+Math.abs(b):"+ "+b}`,[F("v","答え",v)],
+      ["各項に x = "+n+" を代入する。x² は ("+n+")²。",`(${n})² = ${n*n}、${a} × (${n}) = ${a*n} を計算しよう。`],
+      `(${n})² ${a<0?"− "+Math.abs(a):"+ "+a} × (${n}) ${b<0?"− "+Math.abs(b):"+ "+b}\n= ${n*n} + ${a*n} ${b<0?"− "+Math.abs(b):"+ "+b} = ${v}`); }
+  const p0=NZ(-6,6), y0=NZ(-6,6); const N=2*p0+3*y0;
+  return P("poly",4,`等式 2x + 3y = ${N} について、x = ${p0} のときの y の値を求めよ。`,[F("y","y",y0)],
+    ["x に "+p0+" を代入すると、y の方程式になる。",`2 × ${p0} = ${2*p0}。3y = ${N} − ${2*p0} = ${3*y0}。`],
+    `2 × ${p0} + 3y = ${N}\n3y = ${3*y0}\ny = ${y0}`);
+},
+simul(L){
+  const x0=NZ(-7,7), y0=NZ(-7,7);
+  if(L===1){ const s=x0+y0, d=x0-y0;
+    return P("simul",1,`次の連立方程式を解け。`,[F("x","x",x0), F("y","y",y0)],
+      ["2つの式をたすと、y が消える（加減法）。","2x = "+s+" + "+d+" = "+(2*x0)+" になる。"],
+      `2式をたすと 2x = ${2*x0}、x = ${x0}\nx + y = ${s} に代入して y = ${y0}`,{sys:[`x + y = ${s}`,`x − y = ${d}`]}); }
+  if(L===4){ const a=pick([80,100,120,150,200,250,300]); let b=pick([100,150,200,250,300,350,400]); if(b===a)b+=50;
+    const n=x0+0; const cx=RI(2,9); let cy=RI(2,9); if(cy===cx)cy+=1; const tot=cx+cy, money=a*cx+b*cy;
+    return P("simul",4,`1個 ${a} 円のりんごと、1個 ${b} 円のみかんを合わせて ${tot} 個買うと、代金は ${money} 円であった。りんごとみかんは、それぞれ何個買ったか。`,
+      [F("x","りんご（個）",cx), F("y","みかん（個）",cy)],
+      ["個数の式と、代金の式を1つずつ立てる。","りんごを x 個、みかんを y 個とすると、x + y = "+tot+"。"],
+      `x + y = ${tot}\n${a}x + ${b}y = ${money}\n解くと x = ${cx}, y = ${cy}`); }
+  let a,b,c,d; do{ a=NZ(-6,6); b=NZ(-6,6); c=NZ(-6,6); d=NZ(-6,6); }while(a*d-b*c===0);
+  const e=a*x0+b*y0, f=c*x0+d*y0;
+  const lv=L;
+  return P("simul",lv,`次の連立方程式を解け。`,[F("x","x",x0), F("y","y",y0)],
+    ["加減法：どちらかの文字の係数をそろえて、たすかひく。","まず1つの文字を消して、もう一方を求めよう。"],
+    `加減法で解くと x = ${x0}\n代入して y = ${y0}\n（検算: ${a}×${x0} + ${b}×${y0} = ${e} ✓）`,
+    {sys:[`${a}x ${b<0?"− "+Math.abs(b):"+ "+b}y = ${e}`,`${c}x ${d<0?"− "+Math.abs(d):"+ "+d}y = ${f}`]});
+},
+lin_fn(L){
+  if(L===1){ const a=NZ(-5,5), b=RI(-9,9), n=RI(-6,6);
+    const yv=a*n+b; const R=Math.max(10,Math.abs(yv)+2); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-6,6,-R,R,(X,Y)=>{
+      let g=`<line x1="${X(-6)}" y1="${Y(a*-6+b)}" x2="${X(6)}" y2="${Y(a*6+b)}" stroke="#d33a2c" stroke-width="2.4"/>`;
+      g+=`<line x1="${X(n)}" y1="${Y(0)}" x2="${X(n)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<line x1="${X(0)}" y1="${Y(yv)}" x2="${X(n)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<circle cx="${X(n)}" cy="${Y(yv)}" r="4.5" fill="#d33a2c"/>`;
+      g+=svgText(X(0)-9, Y(yv)+4, "？", {size:14, bold:1, color:"#d33a2c", anchor:"end"});
+      return g; }, {step:stp});
+    return P("lin_fn",1,`一次関数 y = ${a}x ${b<0?"− "+Math.abs(b):"+ "+b} について、x = ${n} のときの y の値を求めよ。`,[F("v","y",a*n+b)],
+      ["式に x の値を代入する。",`y = ${a} × ${n} ${b<0?"− "+Math.abs(b):"+ "+b} を計算しよう。`],
+      `y = ${a} × ${n} ${b<0?"− "+Math.abs(b):"+ "+b} = ${a*n+b}`,{fig}); }
+  if(L===2){ const a=NZ(-4,4), b=RI(-8,8); const x1=RI(-5,3); const x2=x1+pick([2,3,4]); const n=x2+pick([1,2,3]);
+    const yv=a*n+b; const R=Math.max(10,Math.abs(yv)+2,Math.abs(a*x1+b)+2,Math.abs(a*x2+b)+2); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-6,7,-R,R,(X,Y)=>{
+      let g=`<line x1="${X(-6)}" y1="${Y(a*-6+b)}" x2="${X(7)}" y2="${Y(a*7+b)}" stroke="#d33a2c" stroke-width="2.4"/>`;
+      g+=`<circle cx="${X(x1)}" cy="${Y(a*x1+b)}" r="4.5" fill="#1d3a8a"/><circle cx="${X(x2)}" cy="${Y(a*x2+b)}" r="4.5" fill="#1d3a8a"/>`;
+      g+=svgText(X(x1)-6, Y(a*x1+b)-8, `(${x1}, ${a*x1+b})`, {size:11.5, bold:1});
+      g+=svgText(X(x2)+6, Y(a*x2+b)-8, `(${x2}, ${a*x2+b})`, {size:11.5, bold:1});
+      g+=`<line x1="${X(n)}" y1="${Y(0)}" x2="${X(n)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<circle cx="${X(n)}" cy="${Y(yv)}" r="4.5" fill="#d33a2c"/>`;
+      g+=svgText(X(n)+8, Y(yv)-6, "？", {size:14, bold:1, color:"#d33a2c"});
+      return g; }, {step:stp});
+    return P("lin_fn",2,`一次関数のグラフが2点 (${x1}, ${a*x1+b})、(${x2}, ${a*x2+b}) を通る。x = ${n} のときの y の値を求めよ。`,[F("v","y",a*n+b)],
+      ["まず傾き a = (yの変化量) ÷ (xの変化量) を求める。",`傾きは (${a*x2+b} − ${a*x1+b}) ÷ (${x2} − ${x1}) = ${a}。`],
+      `傾き a = ${a}\n点 (${x1}, ${a*x1+b}) を使うと 切片 b = ${b}\ny = ${a}x ${b<0?"− "+Math.abs(b):"+ "+b}\nx = ${n} のとき y = ${a*n+b}`,{fig}); }
+  if(L===3){ const x0=NZ(-6,6), y0=RI(-9,9); const a1=NZ(-4,4); let a2=NZ(-4,4); if(a2===a1)a2+=2;
+    const b1=y0-a1*x0, b2=y0-a2*x0;
+    const R=Math.max(10,Math.abs(y0)+5); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-6,6,-R,R,(X,Y)=>{
+      let g=`<line x1="${X(-6)}" y1="${Y(a1*-6+b1)}" x2="${X(6)}" y2="${Y(a1*6+b1)}" stroke="#d33a2c" stroke-width="2.2"/>`;
+      g+=`<line x1="${X(-6)}" y1="${Y(a2*-6+b2)}" x2="${X(6)}" y2="${Y(a2*6+b2)}" stroke="#1e9e62" stroke-width="2.2"/>`;
+      g+=`<circle cx="${X(x0)}" cy="${Y(y0)}" r="5" fill="#1c2333"/>`;
+      g+=svgText(X(x0)+10, Y(y0)-8, "交点", {size:12, bold:1});
+      return g; }, {step:stp});
+    return P("lin_fn",3,`2直線 y = ${a1}x ${b1<0?"− "+Math.abs(b1):"+ "+b1} と y = ${a2}x ${b2<0?"− "+Math.abs(b2):"+ "+b2} の交点の座標を求めよ。`,
+      [F("x","x 座標",x0), F("y","y 座標",y0)],
+      ["交点では、2つの式の y が等しい。連立方程式として解く。",`${a1}x ${b1<0?"− "+Math.abs(b1):"+ "+b1} = ${a2}x ${b2<0?"− "+Math.abs(b2):"+ "+b2} とおいて x を求めよう。`],
+      `2式を連立させると x = ${x0}\ny = ${a1} × ${x0} ${b1<0?"− "+Math.abs(b1):"+ "+b1} = ${y0}\n交点 (${x0}, ${y0})`,{fig}); }
+  const a=-pick([1,2,3]); const xi=pick([2,3,4,6]); const b=-a*xi; const area=b*xi/2;
+  const fig4=graphSVG(-2,xi+3,-2,b+3,(X,Y)=>{
+    let g=`<polygon points="${X(0)},${Y(0)} ${X(xi)},${Y(0)} ${X(0)},${Y(b)}" fill="#fdeceb" stroke="none"/>`;
+    g+=`<line x1="${X(-1.5)}" y1="${Y(a*-1.5+b)}" x2="${X(xi+2)}" y2="${Y(a*(xi+2)+b)}" stroke="#d33a2c" stroke-width="2.4"/>`;
+    return g; });
+  return P("lin_fn",4,`直線 y = ${a}x + ${b} と x 軸、y 軸で囲まれた三角形の面積を求めよ。`,[F("v","面積",area)],
+    ["x 軸との交点は y = 0 のとき、y 軸との交点は x = 0 のとき。",`y 軸との交点は (0, ${b})、x 軸との交点は (${xi}, 0)。底辺 ${xi}、高さ ${b} の三角形。`],
+    `底辺 ${xi}、高さ ${b}\n面積 = ${xi} × ${b} ÷ 2 = ${fracStr(b*xi,2)}`,{fig:fig4});
+},
+prob(L){
+  if(L===1){ const kind=pick(["even","big","mult3"]);
+    if(kind==="even") return P("prob",1,`さいころを1回投げるとき、偶数の目が出る確率を求めよ。`,[F("v","確率",0.5)],
+      ["確率は「あてはまる場合の数 ÷ すべての場合の数」。","偶数の目は 2, 4, 6 の3つ。全部で6通り。"],
+      `偶数の目は3つ、すべての目は6つ\n確率 = 3/6 = 1/2`);
+    if(kind==="big"){ const k=pick([4,5]); const cnt=7-k;
+      return P("prob",1,`さいころを1回投げるとき、${k} 以上の目が出る確率を求めよ。`,[F("v","確率",cnt/6)],
+        ["あてはまる目を数えよう。",`${k} 以上の目は ${cnt} つ。全部で6通り。`],
+        `あてはまる目は ${cnt} つ\n確率 = ${cnt}/6 = ${fracStr(cnt,6)}`); }
+    return P("prob",1,`さいころを1回投げるとき、3の倍数の目が出る確率を求めよ。`,[F("v","確率",1/3)],
+      ["3の倍数の目は 3 と 6。","あてはまるのは2つ、全部で6通り。"],
+      `3の倍数は 3, 6 の2つ\n確率 = 2/6 = 1/3`); }
+  if(L===2){ const kind=pick(["both","least","mix"]);
+    if(kind==="both") return P("prob",2,`硬貨を2枚同時に投げるとき、2枚とも表が出る確率を求めよ。`,[F("v","確率",0.25)],
+      ["出方は全部で 2×2 = 4通り。","2枚とも表は、そのうち1通りだけ。"],
+      `すべての場合 4通り、あてはまる場合 1通り\n確率 = 1/4`);
+    if(kind==="mix") return P("prob",2,`硬貨を2枚同時に投げるとき、表と裏が1枚ずつ出る確率を求めよ。`,[F("v","確率",0.5)],
+      ["（表,裏）と（裏,表）は別の場合として数える。","あてはまるのは2通り、全部で4通り。"],
+      `あてはまる場合 2通り、すべて 4通り\n確率 = 2/4 = 1/2`);
+    return P("prob",2,`硬貨を2枚同時に投げるとき、少なくとも1枚は表が出る確率を求めよ。`,[F("v","確率",0.75)],
+      ["「少なくとも1枚」は、反対の場合（2枚とも裏）を引くと考えやすい。","2枚とも裏は1通り。1 − 1/4 を計算しよう。"],
+      `2枚とも裏の確率は 1/4\n1 − 1/4 = 3/4`); }
+  if(L===3){ const s=pick([5,6,7,8,9]); const cnt=6-Math.abs(7-s);
+    return P("prob",3,`さいころを2回投げるとき、出た目の和が ${s} になる確率を求めよ。`,[F("v","確率",cnt/36)],
+      ["すべての場合は 36通り。和が "+s+" になる組み合わせを数える。","和が "+s+" になるのは "+cnt+" 通り。"],
+      `和が ${s} になる場合 ${cnt} 通り、すべて 36 通り\n確率 = ${cnt}/36 = ${fracStr(cnt,36)}`); }
+  const a=pick([2,3,4,5]), b=pick([2,3,4,5]); const both=Math.random()<0.5;
+  if(both) return P("prob",4,`赤球が ${a} 個、白球が ${b} 個入った袋から、同時に2個取り出すとき、2個とも赤球である確率を求めよ。`,[F("v","確率",(a*(a-1))/((a+b)*(a+b-1)))],
+    ["同時に2個取る場合の数は、組み合わせで数える。","すべての場合 (a+b) 個から2個選ぶ数、あてはまる場合 赤から2個選ぶ数。"],
+    `すべて: ${a+b} 個から2個 → ${(a+b)*(a+b-1)/2} 通り\nあてはまる: 赤 ${a} 個から2個 → ${a*(a-1)/2} 通り\n確率 = ${fracStr(a*(a-1),(a+b)*(a+b-1))}`);
+  return P("prob",4,`赤球が ${a} 個、白球が ${b} 個入った袋から、1個取り出すとき、赤球である確率を求めよ。`,[F("v","確率",a/(a+b))],
+    ["あてはまる場合 ÷ すべての場合。","赤球は "+a+" 個、全部で "+(a+b)+" 個。"],
+    `確率 = ${a}/${a+b} = ${fracStr(a,a+b)}`);
+},
+expand(L){
+  if(L===1){ const a=NZ(-9,9), b=NZ(-9,9);
+    return P("expand",1,`次の式を展開せよ。答えは x² + (係数)x + (定数) の形で答えよ。\n(x ${a<0?"− "+Math.abs(a):"+ "+a})(x ${b<0?"− "+Math.abs(b):"+ "+b})`,
+      [F("c1","x の係数",a+b), F("c2","定数項",a*b)],
+      ["(x+a)(x+b) = x² + (a+b)x + ab の公式を使う。",`x の係数は ${a} + ${b}、定数項は ${a} × ${b}。`],
+      `x の係数: ${a} + ${b} = ${a+b}\n定数項: ${a} × ${b} = ${a*b}`); }
+  if(L===2){ const a=NZ(-8,8); let b=NZ(-8,8); if(b===a)b+=1; const p=a+b, q=a*b;
+    return P("expand",2,`次の式を因数分解せよ。答えは (x + □)(x + △) の □ と △ に入る数を答えよ。\nx² ${p<0?"− "+Math.abs(p):"+ "+p}x ${q<0?"− "+Math.abs(q):"+ "+q}`,
+      [F("c1","□",a), F("c2","△",b)],["たして "+p+"、かけて "+q+" になる2つの数を探す。","候補は "+q+" の約数の組から探そう。"],
+      `たして ${p}、かけて ${q} になるのは ${a} と ${b}\n(x ${a<0?"− "+Math.abs(a):"+ "+a})(x ${b<0?"− "+Math.abs(b):"+ "+b})`,{pair:true}); }
+  if(L===3){ const a=NZ(-9,9);
+    return P("expand",3,`次の式を展開せよ。答えは x² + (係数)x + (定数) の形で答えよ。\n(x ${a<0?"− "+Math.abs(a):"+ "+a})²`,
+      [F("c1","x の係数",2*a), F("c2","定数項",a*a)],
+      ["(x+a)² = x² + 2ax + a² の公式を使う。",`x の係数は 2 × ${a}、定数項は ${a}²。`],
+      `x の係数: 2 × ${a} = ${2*a}\n定数項: ${a}² = ${a*a}`); }
+  const a=NZ(-5,5), b=RI(-8,8), c=NZ(-5,5); let d=RI(-8,8); if(a*c===0)return GEN.expand(4);
+  return P("expand",4,`次の式を展開せよ。答えは (x²の係数)x² + (xの係数)x + (定数) の形で答えよ。\n(${a}x ${b<0?"− "+Math.abs(b):"+ "+b})(${c}x ${d<0?"− "+Math.abs(d):"+ "+d})`,
+    [F("c1","x² の係数",a*c), F("c2","x の係数",a*d+b*c), F("c3","定数項",b*d)],
+    ["各項をすべてかけ合わせる（分配法則を2回）。","x の項は (外×外) と (内×内) の2つが出る。"],
+    `x²: ${a} × ${c} = ${a*c}\nx: ${a} × ${d} + ${b} × ${c} = ${a*d+b*c}\n定数: ${b} × ${d} = ${b*d}`);
+},
+sqrt(L){
+  if(L===1){ const a=pick([2,3,4,5,6,7]); const b=pick([2,3,5,6,7,10]); const n=a*a*b;
+    return P("sqrt",1,`√${n} を a√b の形に変形せよ。`,[F("c1","√の外の数 a",a), F("c2","√の中の数 b",b)],
+      ["中身を「平方数 × 残り」に分ける。",`${n} = ${a*a} × ${b} と分けられる。√${a*a} = ${a} が外に出る。`],
+      `${n} = ${a}² × ${b}\n√${n} = ${a}√${b}`); }
+  if(L===2){ const a=RI(2,9), c=RI(2,9), b=pick([2,3,5,6,7]);
+    return P("sqrt",2,`次の計算をせよ。答えは (係数)√${b} の形で、係数を答えよ。\n${a}√${b} + ${c}√${b}`,[F("c1","係数",a+c)],
+      ["√の中が同じものは、文字のようにまとめられる。",`(${a} + ${c})√${b} と計算しよう。`],
+      `${a}√${b} + ${c}√${b} = ${a+c}√${b}`); }
+  if(L===3){ const b=pick([2,3,5,6,7,10]); const c0=pick([1,2,3,4]); const g=gcd(c0,b);
+    return P("sqrt",3,`次の式の分母を有理化せよ。答えは (係数)√${b} / (分母) の形で答えよ。\n\\q{${c0}}{${b}}`,[F("c1","分子の √ の係数",c0/g), F("c2","分母",b/g)],
+      ["分母の √ を消すには、分母と分子に同じ √ をかける。","分子・分母に √"+b+" をかけると、分母は "+b+" になる。約分も忘れずに。"],
+      `\\q{${c0}}{${b}} = \\f{${c0}√${b}}{${b}} = \\f{${c0/g}√${b}}{${b/g}}`); }
+  const pairv=pick([[2,8,18],[3,12,27],[5,20,45],[2,18,32],[3,27,48]]);
+  return P("sqrt",4,`次の計算をせよ。\n(√${pairv[0]} + √${pairv[1]})²`,[F("v","答え",pairv[2])],
+    ["(a+b)² = a² + 2ab + b² の展開を使う。","√どうしのかけ算 √"+pairv[0]+" × √"+pairv[1]+" = √"+(pairv[0]*pairv[1])+" = "+Math.sqrt(pairv[0]*pairv[1])+" になる。"],
+    `(√${pairv[0]} + √${pairv[1]})² = ${pairv[0]} + 2√${pairv[0]*pairv[1]} + ${pairv[1]} = ${pairv[0]} + ${2*Math.sqrt(pairv[0]*pairv[1])} + ${pairv[1]} = ${pairv[2]}`);
+},
+quad_eq(L){
+  if(L===1){ const r1=NZ(-8,8); let r2=NZ(-8,8); if(r2===r1)r2+=2; const p=-(r1+r2), q=r1*r2;
+    return P("quad_eq",1,`次の二次方程式を解け。\nx² ${p<0?"− "+Math.abs(p):"+ "+p}x ${q<0?"− "+Math.abs(q):"+ "+q} = 0`,
+      [F("c1","解 1",r1), F("c2","解 2",r2)],["因数分解できれば、各因数 = 0 として解ける。","たして "+(-p)+"、かけて "+q+" になる2数を探そう。"],
+      `(x ${r1<0?"+ "+Math.abs(r1):"− "+r1})(x ${r2<0?"+ "+Math.abs(r2):"− "+r2}) = 0\nx = ${r1}, ${r2}`,{pair:true}); }
+  if(L===2){ const a=RI(-8,8); const b=pick([2,3,4,5,6]); const r1=-a+b, r2=-a-b;
+    return P("quad_eq",2,`次の二次方程式を解け。\n(x ${a<0?"− "+Math.abs(a):"+ "+a})² = ${b*b}`,
+      [F("c1","解 1",r1), F("c2","解 2",r2)],["(□)² = k の形は、□ = ±√k として解く。",`x ${a<0?"− "+Math.abs(a):"+ "+a} = ±${b} の2つの式に分ける。`],
+      `x ${a<0?"− "+Math.abs(a):"+ "+a} = ${b} のとき x = ${r1}\nx ${a<0?"− "+Math.abs(a):"+ "+a} = −${b} のとき x = ${r2}`,{pair:true}); }
+  if(L===3){ const a0=pick([2,3]); const r1=pick([-4,-3,-2,-1,1,2,3]); let r2=pick([-3,-2,-1,1,2,3,4]); if(r2===r1)r2+=1;
+    const B=-a0*(r1+r2), C=a0*r1*r2;
+    return P("quad_eq",3,`次の二次方程式を解け。\n${a0}x² ${B<0?"− "+Math.abs(B):"+ "+B}x ${C<0?"− "+Math.abs(C):"+ "+C} = 0`,
+      [F("c1","解 1",r1), F("c2","解 2",r2)],["解の公式か、たすき掛けの因数分解で解ける。",`因数分解すると ${a0}(x ${r1<0?"+ "+Math.abs(r1):"− "+r1})(x ${r2<0?"+ "+Math.abs(r2):"− "+r2}) = 0 になる。`],
+      `${a0}(x ${r1<0?"+ "+Math.abs(r1):"− "+r1})(x ${r2<0?"+ "+Math.abs(r2):"− "+r2}) = 0\nx = ${r1}, ${r2}`,{pair:true}); }
+  const x0=RI(3,12); const a=RI(2,9); const A=x0*(x0+a);
+  return P("quad_eq",4,`縦が x cm、横が縦より ${a} cm 長い長方形の面積が ${A} cm² である。縦の長さを求めよ。`,[F("x","縦 (cm)",x0)],
+    ["面積 = 縦 × 横 の式を立てる：x(x + "+a+") = "+A+"。","展開して因数分解すると、(x − □)(x + △) = 0 の形になる。長さは正の数だけが答え。"],
+    `x(x + ${a}) = ${A}\nx² + ${a}x − ${A} = 0\n(x − ${x0})(x + ${x0+a}) = 0\nx = ${x0}（長さなので正の解）`);
+},
+quad_fn(L){
+  if(L===1){ const a=NZ(-4,4), n=RI(-5,5)||2;
+    const yv=a*n*n; const R=Math.max(10,Math.abs(yv)+2); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-5,5,-R,R,(X,Y)=>{
+      let d=""; for(let x=-5;x<=5.01;x+=0.2){ d+=(x===-5?"M":"L")+X(x).toFixed(1)+" "+Y(a*x*x).toFixed(1)+" "; }
+      let g=`<path d="${d}" fill="none" stroke="#d33a2c" stroke-width="2.4"/>`;
+      g+=`<line x1="${X(n)}" y1="${Y(0)}" x2="${X(n)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<line x1="${X(0)}" y1="${Y(yv)}" x2="${X(n)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<circle cx="${X(n)}" cy="${Y(yv)}" r="4.5" fill="#d33a2c"/>`;
+      g+=svgText(X(0)-9, Y(yv)+4, "？", {size:14, bold:1, color:"#d33a2c", anchor:"end"});
+      return g; }, {step:stp});
+    return P("quad_fn",1,`関数 y = ${a}x² について、x = ${n} のときの y の値を求めよ。`,[F("v","y",a*n*n)],
+      ["式に x の値を代入する。x² を先に計算。",`y = ${a} × ${n}² = ${a} × ${n*n}。`],
+      `y = ${a} × ${n*n} = ${a*n*n}`,{fig}); }
+  if(L===2){ const a=NZ(-4,4); const p=pick([2,3,4]); const q=a*p*p;
+    const R=Math.max(10,Math.abs(q)+3); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-5,5,-R,R,(X,Y)=>{
+      let d=""; for(let x=-5;x<=5.01;x+=0.2){ d+=(x===-5?"M":"L")+X(x).toFixed(1)+" "+Y(a*x*x).toFixed(1)+" "; }
+      let g=`<path d="${d}" fill="none" stroke="#d33a2c" stroke-width="2.4"/>`;
+      g+=`<circle cx="${X(p)}" cy="${Y(q)}" r="5" fill="#1d3a8a"/>`;
+      g+=svgText(X(p)+10, Y(q)-8, `(${p}, ${q})`, {size:12, bold:1});
+      return g; }, {step:stp});
+    return P("quad_fn",2,`関数 y = ax² のグラフが点 (${p}, ${q}) を通る。a の値を求めよ。`,[F("v","a",a)],
+      ["通る点の座標を式に代入すると、a の方程式になる。",`${q} = a × ${p}² = ${p*p}a。両辺を ${p*p} でわろう。`],
+      `${q} = ${p*p}a\na = ${a}`,{fig}); }
+  if(L===3){ const a=NZ(-3,3); const s=RI(-4,2), t=s+pick([2,3,4]);
+    const R=Math.max(10,Math.abs(a*t*t)+2,Math.abs(a*s*s)+2); const stp=R>20?5:R>12?2:1;
+    const fig=graphSVG(-5,6,-R,R,(X,Y)=>{
+      let d=""; for(let x=-5;x<=6.01;x+=0.2){ d+=(x===-5?"M":"L")+X(x).toFixed(1)+" "+Y(a*x*x).toFixed(1)+" "; }
+      let g=`<path d="${d}" fill="none" stroke="#d33a2c" stroke-width="2.4"/>`;
+      [s,t].forEach(xx=>{ const yv=a*xx*xx;
+        g+=`<line x1="${X(xx)}" y1="${Y(0)}" x2="${X(xx)}" y2="${Y(yv)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+        g+=`<circle cx="${X(xx)}" cy="${Y(yv)}" r="4.5" fill="#1d3a8a"/>`; });
+      return g; }, {step:stp});
+    return P("quad_fn",3,`関数 y = ${a}x² について、x が ${s} から ${t} まで増加するときの変化の割合を求めよ。`,[F("v","変化の割合",a*(s+t))],
+      ["変化の割合 = (yの増加量) ÷ (xの増加量)。y = ax² では a × (s + t) になる。",`x = ${s} のとき y = ${a*s*s}、x = ${t} のとき y = ${a*t*t}。差を比べてみよう。`],
+      `(${a*t*t} − ${a*s*s}) ÷ (${t} − ${s}) = ${a*(s+t)}`,{fig}); }
+  const r1=pick([2,3,4,5]); const r2=1-r1; const bb=r1*r2*-1;
+  const fig4=graphSVG(-5,5,-4,18,(X,Y)=>{
+    let d=""; for(let x=-5;x<=5.01;x+=0.2){ d+=(x===-5?"M":"L")+X(x).toFixed(1)+" "+Y(x*x).toFixed(1)+" "; }
+    let g=`<path d="${d}" fill="none" stroke="#d33a2c" stroke-width="2.4"/>`;
+    g+=`<line x1="${X(-5)}" y1="${Y(-5+bb)}" x2="${X(5)}" y2="${Y(5+bb)}" stroke="#1e9e62" stroke-width="2.2"/>`;
+    g+=`<circle cx="${X(r1)}" cy="${Y(r1*r1)}" r="5" fill="#1c2333"/><circle cx="${X(r2)}" cy="${Y(r2*r2)}" r="5" fill="#1c2333"/>`;
+    return g; }, {step:2});
+  return P("quad_fn",4,`関数 y = x² と直線 y = x ${bb<0?"− "+Math.abs(bb):"+ "+bb} の交点の x 座標を、すべて求めよ。`,
+    [F("c1","x 座標 1",r1), F("c2","x 座標 2",r2)],["交点では2つの式の y が等しい。x² = x "+(bb<0?"− "+Math.abs(bb):"+ "+bb)+" とおく。","移項すると因数分解できる二次方程式になる。"],
+    `x² = x ${bb<0?"− "+Math.abs(bb):"+ "+bb}\nx² − x ${bb<0?"+ "+Math.abs(bb):"− "+bb} = 0\n(x − ${r1})(x − ${r2}) = 0\nx = ${r1}, ${r2}`,{pair:true, fig:fig4});
+},
+similar(L){
+  if(L===1){ const k=pick([2,3,4,5]); const a=RI(2,9);
+    const figS1=svgWrap(440,232,`
+      <polygon points="50,180 140,180 70,80" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+      <polygon points="240,180 384,180 272,20" fill="#fdeceb" stroke="#d33a2c" stroke-width="2"/>
+      ${svgText(38, 186, "A", {serif:1, italic:1, size:15, bold:1})}${svgText(152, 186, "B", {serif:1, italic:1, size:15, bold:1})}${svgText(70, 66, "C", {serif:1, italic:1, size:15, bold:1})}
+      ${svgText(228, 186, "D", {serif:1, italic:1, size:15, bold:1})}${svgText(396, 186, "E", {serif:1, italic:1, size:15, bold:1})}${svgText(272, 14, "F", {serif:1, italic:1, size:15, bold:1})}
+      ${svgText(95, 200, `${a} cm`, {size:13, bold:1})}${svgText(312, 200, "？ cm", {size:13, bold:1, color:"#d33a2c"})}
+      ${svgText(220, 224, `相似比 1 : ${k}`, {size:12.5, color:"#6b7690"})}`);
+    return P("similar",1,`△ABC と △DEF は相似で、相似比は 1 : ${k} である。AB = ${a} cm のとき、対応する辺 DE の長さを求めよ。`,[F("v","DE (cm)",a*k)],
+      ["相似比は、対応する辺の長さの比。","DE = AB × "+k+" を計算しよう。"],
+      `DE = ${a} × ${k} = ${a*k} cm`,{fig:figS1}); }
+  if(L===2){ const a=RI(2,8), b=RI(2,8), c=pick([3,4,5,6,8,9,10,12]); const ec=b*c/a;
+    if(!Number.isInteger(ec)) return GEN.similar(2);
+    const A=[160,26], B=[36,206], C=[284,206];
+    const Dp=[A[0]+(B[0]-A[0])*a/(a+b), A[1]+(B[1]-A[1])*a/(a+b)];
+    const Ep=[A[0]+(C[0]-A[0])*c/(c+ec), A[1]+(C[1]-A[1])*c/(c+ec)];
+    const figS2=svgWrap(320,240,`
+      <polygon points="${A} ${B} ${C}" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+      <line x1="${Dp[0]}" y1="${Dp[1]}" x2="${Ep[0]}" y2="${Ep[1]}" stroke="#d33a2c" stroke-width="2.4"/>
+      ${svgText(A[0], A[1]-8, "A", {serif:1, italic:1, size:15, bold:1})}${svgText(B[0]-8, B[1]+8, "B", {serif:1, italic:1, size:15, bold:1})}${svgText(C[0]+8, C[1]+8, "C", {serif:1, italic:1, size:15, bold:1})}
+      ${svgText(Dp[0]-14, Dp[1], "D", {serif:1, italic:1, size:14, bold:1})}${svgText(Ep[0]+14, Ep[1], "E", {serif:1, italic:1, size:14, bold:1})}
+      ${svgText((A[0]+Dp[0])/2-16, (A[1]+Dp[1])/2, `${a}`, {size:12.5, bold:1})}${svgText((Dp[0]+B[0])/2-16, (Dp[1]+B[1])/2, `${b}`, {size:12.5, bold:1})}
+      ${svgText((A[0]+Ep[0])/2+16, (A[1]+Ep[1])/2, `${c}`, {size:12.5, bold:1})}${svgText((Ep[0]+C[0])/2+16, (Ep[1]+C[1])/2, "？", {size:13, bold:1, color:"#d33a2c"})}
+      ${svgText(160, 232, "（単位は cm）", {size:11.5, color:"#6b7690"})}`);
+    return P("similar",2,`下の図で、DE ∥ BC である。AD = ${a} cm、DB = ${b} cm、AE = ${c} cm のとき、EC の長さを求めよ。`,
+      [F("v","EC (cm)",ec)],["平行線と線分の比：AD : DB = AE : EC が成り立つ。",`${a} : ${b} = ${c} : EC。比の性質（内項の積＝外項の積）を使おう。`],
+      `${a} : ${b} = ${c} : EC\n${a} × EC = ${b*c}\nEC = ${ec} cm`,{fig:figS2}); }
+  if(L===3){ const k=pick([2,3]); const A=pick([5,8,10,12,15,20]);
+    const figS3=svgWrap(440,232,`
+      <polygon points="50,180 140,180 70,80" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+      <polygon points="240,180 384,180 272,20" fill="#fdeceb" stroke="#d33a2c" stroke-width="2"/>
+      ${svgText(88, 150, `${A} cm²`, {size:13, bold:1})}${svgText(300, 130, "？ cm²", {size:14, bold:1, color:"#d33a2c"})}
+      ${svgText(220, 224, `相似比 1 : ${k}`, {size:12.5, color:"#6b7690"})}`);
+    return P("similar",3,`相似比が 1 : ${k} の2つの図形がある。小さい方の面積が ${A} cm² のとき、大きい方の面積を求めよ。`,[F("v","面積 (cm²)",A*k*k)],
+      ["面積比は、相似比の2乗。","相似比 1 : "+k+" なら、面積比は 1 : "+(k*k)+"。"],
+      `面積比 = 1 : ${k}² = 1 : ${k*k}\n${A} × ${k*k} = ${A*k*k} cm²`,{fig:figS3}); }
+  const bc=pick([8,10,12,14,16,18,20]);
+  const A4=[160,26], B4=[36,206], C4=[284,206];
+  const D4=[(A4[0]+B4[0])/2,(A4[1]+B4[1])/2], E4=[(A4[0]+C4[0])/2,(A4[1]+C4[1])/2];
+  const figS4=svgWrap(320,240,`
+    <polygon points="${A4} ${B4} ${C4}" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+    <line x1="${D4[0]}" y1="${D4[1]}" x2="${E4[0]}" y2="${E4[1]}" stroke="#d33a2c" stroke-width="2.4"/>
+    ${svgText(A4[0], A4[1]-8, "A", {serif:1, italic:1, size:15, bold:1})}${svgText(B4[0]-8, B4[1]+8, "B", {serif:1, italic:1, size:15, bold:1})}${svgText(C4[0]+8, C4[1]+8, "C", {serif:1, italic:1, size:15, bold:1})}
+    ${svgText(D4[0]-14, D4[1], "D", {serif:1, italic:1, size:14, bold:1})}${svgText(E4[0]+14, E4[1], "E", {serif:1, italic:1, size:14, bold:1})}
+    ${svgText(160, B4[1]+22, `BC = ${bc} cm`, {size:13, bold:1})}${svgText(160, D4[1]-8, "DE = ？ cm", {size:12.5, bold:1, color:"#d33a2c"})}`);
+  return P("similar",4,`△ABC で、辺 AB の中点を D、辺 AC の中点を E とする。BC = ${bc} cm のとき、DE の長さを求めよ。`,
+    [F("v","DE (cm)",bc/2)],["中点連結定理：2辺の中点を結ぶ線分は、残りの辺と平行で長さは半分。","DE = BC ÷ 2 を計算しよう。"],
+    `中点連結定理より DE = ${bc} ÷ 2 = ${bc/2} cm`,{fig:figS4});
+},
+pyth(L){
+  const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[6,8,10],[9,12,15],[20,21,29]];
+  if(L===1){ const t=pick(TR); const k=pick([1,1,2]); const x=t[0]*k, y=t[1]*k, z=t[2]*k;
+    const fig=triSVG([[70,190,"A",-16,8],[280,190,"B",14,8],[70,50,"C",-16,-4]],
+      [{t:`${x} cm`, dy:20},{t:"？ cm", dx:22, dy:-4},{t:`${y} cm`, dx:-26}], {rightAngle:0});
+    return P("pyth",1,`直角三角形の2辺の長さが ${x} cm、${y} cm（この2辺が直角をはさむ）である。斜辺の長さを求めよ。`,[F("v","斜辺 (cm)",z)],
+      ["三平方の定理：a² + b² = c²（c は斜辺）。",`${x}² + ${y}² = ${x*x+y*y}。この平方根が斜辺。`],
+      `${x}² + ${y}² = ${x*x} + ${y*y} = ${z*z}\n斜辺 = ${z} cm`,{fig}); }
+  if(L===2){ const t=pick(TR); const hyp=t[2], leg=t[0], rest=t[1];
+    const fig=triSVG([[70,190,"A",-16,8],[280,190,"B",14,8],[70,50,"C",-16,-4]],
+      [{t:`${leg} cm`, dy:20},{t:`${hyp} cm`, dx:22, dy:-4},{t:"？ cm", dx:-24}], {rightAngle:0});
+    return P("pyth",2,`直角三角形の斜辺が ${hyp} cm、1辺が ${leg} cm である。もう1辺の長さを求めよ。`,[F("v","長さ (cm)",rest)],
+      ["三平方の定理を変形：(もう1辺)² = 斜辺² − 1辺²。",`${hyp}² − ${leg}² = ${hyp*hyp-leg*leg} を計算しよう。`],
+      `${hyp}² − ${leg}² = ${hyp*hyp} − ${leg*leg} = ${rest*rest}\nもう1辺 = ${rest} cm`,{fig}); }
+  if(L===3){ const t=pick(TR); const x1=RI(0,3), y1=RI(0,3); const x2=x1+t[0], y2=y1+t[1];
+    const fig=graphSVG(0,x2+2,0,y2+2,(X,Y)=>{
+      let g=`<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y1)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<line x1="${X(x2)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="#1d3a8a" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      g+=`<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="#d33a2c" stroke-width="2.4"/>`;
+      g+=`<circle cx="${X(x1)}" cy="${Y(y1)}" r="4.5" fill="#1c2333"/><circle cx="${X(x2)}" cy="${Y(y2)}" r="4.5" fill="#1c2333"/>`;
+      g+=svgText(X(x1)-8, Y(y1)+16, `A(${x1}, ${y1})`, {size:12, bold:1});
+      g+=svgText(X(x2)+8, Y(y2)-8, `B(${x2}, ${y2})`, {size:12, bold:1});
+      return g; });
+    return P("pyth",3,`座標平面上の2点 A(${x1}, ${y1})、B(${x2}, ${y2}) の間の距離を求めよ。`,[F("v","距離",t[2])],
+      ["2点の距離は、x の差と y の差を2辺とする直角三角形の斜辺。",`x の差は ${t[0]}、y の差は ${t[1]}。三平方の定理を使おう。`],
+      `x の差 ${t[0]}、y の差 ${t[1]}\n距離² = ${t[0]}² + ${t[1]}² = ${t[2]*t[2]}\n距離 = ${t[2]}`,{fig}); }
+  const box=pick([[1,2,2,3],[2,3,6,7],[4,4,7,9],[2,6,9,11],[1,4,8,9]]);
+  const fig4=svgWrap(360,260,`
+    <g stroke="#1d3a8a" stroke-width="2" fill="none">
+      <rect x="80" y="130" width="140" height="90" fill="#eef3ff"/>
+      <path d="M80 130 L135 85 L275 85 L220 130" fill="#eef3ff"/>
+      <path d="M220 130 L275 85 L275 175 L220 220" fill="#e2ebff"/>
+      <line x1="135" y1="85" x2="135" y2="175" /><line x1="135" y1="175" x2="275" y2="175" /><line x1="80" y1="220" x2="135" y2="175" />
+    </g>
+    <line x1="80" y1="220" x2="275" y2="85" stroke="#d33a2c" stroke-width="2.4" stroke-dasharray="6 4"/>
+    ${svgText(150, 240, `横 ${box[1]} cm`, {size:13, bold:1})}
+    ${svgText(52, 178, `高さ ${box[2]} cm`, {size:13, bold:1})}
+    ${svgText(84, 100, `縦 ${box[0]} cm`, {size:13, bold:1})}
+    ${svgText(196, 138, "対角線", {size:12.5, bold:1, color:"#d33a2c"})}`);
+  return P("pyth",4,`縦 ${box[0]} cm、横 ${box[1]} cm、高さ ${box[2]} cm の直方体の、対角線の長さを求めよ。`,[F("v","対角線 (cm)",box[3])],
+    ["直方体の対角線は、三平方の定理を2回使うか、(対角線)² = 縦² + 横² + 高さ² で求められる。",`${box[0]}² + ${box[1]}² + ${box[2]}² = ${box[3]*box[3]} を確かめよう。`],
+    `(対角線)² = ${box[0]}² + ${box[1]}² + ${box[2]}² = ${box[0]*box[0]+box[1]*box[1]+box[2]*box[2]}\n対角線 = ${box[3]} cm`,{fig:fig4});
+},
+circle(L){
+  if(L===1){ const th=pick([40,50,60,70,80,90,100,120,140,160]);
+    const figC1=circleFigInscribed(`${th}°`, "？");
+    return P("circle",1,`中心角が ${th}° の弧に対する円周角の大きさを求めよ。`,[F("v","円周角 (°)",th/2)],
+      ["円周角の定理：円周角は、同じ弧の中心角の半分。",`${th} ÷ 2 を計算しよう。`],
+      `円周角 = ${th} ÷ 2 = ${th/2}°`,{fig:figC1}); }
+  if(L===2){ const a=pick([25,30,35,40,45,55,65]);
+    const figC2=circleFigInscribed("？", `${a}°`);
+    return P("circle",2,`ある弧に対する円周角が ${a}° である。この弧に対する中心角の大きさを求めよ。`,[F("v","中心角 (°)",2*a)],
+      ["中心角は円周角の2倍。",`${a} × 2 を計算しよう。`],
+      `中心角 = ${a} × 2 = ${2*a}°`,{fig:figC2}); }
+  if(L===3){ const a=pick([30,35,40,45,50,55,60,70]);
+    const O=[160,125], r=88, pt=dg=>[O[0]+r*Math.cos(dg*Math.PI/180), O[1]+r*Math.sin(dg*Math.PI/180)];
+    const T=pt(180), Q=pt(35), R=pt(300);
+    const figC3=svgWrap(320,250,`
+      <circle cx="${O[0]}" cy="${O[1]}" r="${r}" fill="#eef3ff" stroke="#1d3a8a" stroke-width="2"/>
+      <line x1="${T[0]}" y1="${T[1]-95}" x2="${T[0]}" y2="${T[1]+95}" stroke="#1e9e62" stroke-width="2.2"/>
+      <line x1="${T[0]}" y1="${T[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="#d33a2c" stroke-width="2.2"/>
+      <line x1="${R[0]}" y1="${R[1]}" x2="${T[0]}" y2="${T[1]}" stroke="#5a6a8c" stroke-width="1.6"/>
+      <line x1="${R[0]}" y1="${R[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="#5a6a8c" stroke-width="1.6"/>
+      <circle cx="${T[0]}" cy="${T[1]}" r="4" fill="#1c2333"/>
+      ${svgText(T[0]-12, T[1]-8, "接点", {size:11.5, bold:1})}
+      ${svgText(T[0]+20, T[1]-26, "？", {size:15, bold:1, color:"#d33a2c"})}
+      ${svgText(R[0]+16, R[1]-4, `${a}°`, {size:13.5, bold:1})}
+      ${svgText(160, 240, "緑の直線が接線、赤い線分が弦", {size:11.5, color:"#6b7690"})}`);
+    return P("circle",3,`円の外部の点から引いた接線と、接点を通る弦がつくる角が、接線と弦の間にある弧に対する円周角と等しい（接弦定理）。その円周角が ${a}° のとき、接線と弦がつくる角の大きさを求めよ。`,[F("v","角 (°)",a)],
+      ["接弦定理：接線と弦のつくる角 ＝ その弦の弧に対する円周角。","そのまま、円周角と同じ大きさになる。"],
+      `接弦定理より ${a}°`,{fig:figC3}); }
+  const r=pick([3,4,5,6,8,9,10,12]); const th=pick([60,90,120,180,240,270,300]); const coef=2*r*th/360;
+  const O4=[160,132], rr=90, pt4=dg=>[O4[0]+rr*Math.cos(dg*Math.PI/180), O4[1]+rr*Math.sin(dg*Math.PI/180)];
+  const p1=pt4(180), p2=pt4(180+th), mid=pt4(180+th/2);
+  const mido=[O4[0]+34*Math.cos((180+th/2)*Math.PI/180), O4[1]+34*Math.sin((180+th/2)*Math.PI/180)];
+  const rmid=[(O4[0]+p1[0])/2, (O4[1]+p1[1])/2];
+  const figC4=svgWrap(320,264,`
+    <path d="M ${O4[0]} ${O4[1]} L ${p1[0]} ${p1[1]} A ${rr} ${rr} 0 ${th>180?1:0} 1 ${p2[0]} ${p2[1]} Z" fill="#fdeceb" stroke="#d33a2c" stroke-width="2"/>
+    <circle cx="${O4[0]}" cy="${O4[1]}" r="3.5" fill="#1c2333"/>
+    ${svgText(O4[0]-12, O4[1]+16, "O", {serif:1, italic:1, size:13, bold:1})}
+    ${svgText(rmid[0]-6, rmid[1]-8, `${r} cm`, {size:13, bold:1})}
+    ${svgText(mido[0], mido[1]+4, `${th}°`, {size:13.5, bold:1, color:"#d33a2c"})}`);
+  return P("circle",4,`半径 ${r} cm、中心角 ${th}° の扇形の弧の長さを求めよ。答えは □π cm の形で、□ に入る数を答えよ。`,[F("v","□",coef)],
+    ["弧の長さ = (円周) × (中心角/360)。","円周は 2π × "+r+" = "+(2*r)+"π。これに "+th+"/360 をかける。"],
+    `弧の長さ = 2π × ${r} × ${th}/360 = ${fracStr(2*r*th,360)}π cm`,{fig:figC4});
+},
+data(L){
+  if(L===1){ const arr=Array.from({length:5},()=>RI(1,30)).sort((x,y)=>x-y);
+    return P("data",1,`次のデータの中央値を求めよ。\n${arr.join(", ")}`,[F("v","中央値",arr[2])],
+      ["中央値は、データを大きさの順に並べたときの真ん中。","データは5個なので、3番目が中央値。"],
+      `小さい順に並べると ${arr.join(", ")}\n真ん中（3番目）は ${arr[2]}`); }
+  if(L===2){ const N=pick([20,25,40,50]); const f=N/pick([4,5,10]); if(!Number.isInteger(f))return GEN.data(2);
+    return P("data",2,`ある組の生徒 ${N} 人のうち、電車で通学する生徒は ${f} 人である。電車で通学する生徒の相対度数を求めよ。`,[F("v","相対度数",f/N)],
+      ["相対度数 = その階級の度数 ÷ 度数の合計。",`${f} ÷ ${N} を計算しよう。`],
+      `相対度数 = ${f} ÷ ${N} = ${fracStr(f,N)}`); }
+  if(L===3){ const base=Array.from({length:8},()=>RI(2,40)).sort((x,y)=>x-y);
+    const q1=(base[1]+base[2])/2, q3=(base[5]+base[6])/2;
+    return P("data",3,`次のデータの四分位範囲を求めよ。\n${base.join(", ")}`,[F("v","四分位範囲",q3-q1)],
+      ["四分位範囲 = 第3四分位数 − 第1四分位数。","データを半分に分け、下半分の中央値が第1四分位数、上半分の中央値が第3四分位数。"],
+      `第1四分位数 = (${base[1]} + ${base[2]}) ÷ 2 = ${q1}\n第3四分位数 = (${base[5]} + ${base[6]}) ÷ 2 = ${q3}\n四分位範囲 = ${q3} − ${q1} = ${q3-q1}`); }
+  const n=pick([4,5,9,10]); const avg=RI(50,80); const add=avg+pick([-15,-10,-5,5,10,15,20,-20]); const navg=(avg*n+add)/(n+1);
+  return P("data",4,`${n} 人の平均点が ${avg} 点であった。もう1人 ${add} 点の生徒が加わると、${n+1} 人の平均点は何点になるか。`,[F("v","平均点",navg)],
+    ["平均 × 人数 = 合計点。合計を新しい人数でわる。",`合計は ${avg} × ${n} + ${add} = ${avg*n+add} 点。`],
+    `合計: ${avg} × ${n} + ${add} = ${avg*n+add}\n平均: ${avg*n+add} ÷ ${n+1} = ${navg} 点`);
+}
+}
+/* ============ app logic ============ */
+function fmtVal(v){ if(Number.isInteger(v)) return String(v);
+  const fr=[2,3,4,6,8,9,12,36].find(d=>Math.abs(v-Math.round(v*d)/d)<1e-9);
+  if(fr) return fracStr(Math.round(v*fr),fr);
+  return String(Math.round(v*1000)/1000); }
+function ansText(p){ return p.fields.map(f=>f.label+" = "+fmtVal(f.ans)).join("、"); }
+let view="home";
+let session=null;
+function daysLeft(){ if(!S.examDate) return null; return daysBetween(todayStr(), S.examDate); }
+function dueReviews(){ const t=todayStr(); const out=[];
+  S.mistakes.forEach(m=>{ if(m.d2&&t>=m.d2)out.push({m,stage:2}); else if(m.d7&&t>=m.d7)out.push({m,stage:7}); });
+  return out; }
+function pickLevel(unitId, days){
+  const a=acc(unitId); let base;
+  if(a===null) base=1; else if(a<0.5) base=1; else if(a<0.7) base=2; else if(a<0.85) base=3; else base=4;
+  if(days!==null&&days<=14) base=Math.min(4,base+1);
+  return base; }
+function composeDaily(){
+  const t=todayStr(); if(S.daily&&S.daily.date===t) return S.daily;
+  const items=[]; const days=daysLeft();
+  const due=dueReviews().slice(0,2);
+  due.forEach(d=>items.push({reviewId:d.m.id, unit:d.m.unit, level:d.m.level, stage:d.stage}));
+  const scored=UNITS.map(u=>{ const a=acc(u.id); return {u, score: a===null?0.35:a}; })
+    .filter(x=>!items.some(i=>i.unit===x.u.id))
+    .sort((x,y)=>x.score-y.score);
+  const target=RI(4,5);
+  for(const s of scored){ if(items.length>=target)break;
+    items.push({unit:s.u.id, level:pickLevel(s.u.id, days)}); }
+  S.daily={date:t, items, done:0}; save(); return S.daily; }
+function startSession(title, specs, opt){
+  const queue=specs.map(sp=>{ const prob=GEN[sp.unit](sp.level);
+    return {prob, reviewId:sp.reviewId||null, reviewStage:sp.stage||null}; });
+  session={title, queue, idx:0, correct:0, results:[], dailyMode:!!(opt&&opt.daily), timed:!!(opt&&opt.timed), deadline: opt&&opt.timed?Date.now()+opt.timed*1000:null, timerId:null};
+  view="session"; renderSession(); }
+function finishSession(){
+  if(session.timerId)clearInterval(session.timerId);
+  const t=todayStr();
+  const tot=session.results.length, cor=session.results.filter(r=>r.ok).length;
+  if(tot){ const h=S.hist.find(x=>x.date===t); if(h){h.n+=tot;h.c+=cor;} else S.hist.push({date:t,n:tot,c:cor}); }
+  if(session.dailyMode){ const d=S.daily; if(d&&d.date===t) d.done=d.items.length; }
+  const html=`<div class="card"><h2>${esc(session.title)}：結果</h2>
+    <p class="fb ${tot&&cor*2>=tot?"ok":"ng"}">${tot}問中 ${cor}問 正解</p>
+    ${session.results.map((r,i)=>`<p class="small">${i+1}. 【${UMAP[r.prob.unit].name}】Lv${r.prob.level} ${r.ok?"⭕ 正解":r.seenAns?"👀 答えを見た":"❌ 不正解"}</p>`).join("")}
+    <button class="btn" onclick="goHome()">ホームへ</button></div>`;
+  session=null; save(); $("#app").innerHTML=html; window.scrollTo(0,0); }
+function goHome(){ if(session&&session.timerId)clearInterval(session.timerId); session=null; view="home"; renderHome(); }
+function addMistake(p){
+  const ex=S.mistakes.find(x=>x.unit===p.unit&&x.level===p.level);
+  if(!ex) S.mistakes.push({id:"m"+Date.now()+Math.floor(Math.random()*9999), unit:p.unit, level:p.level,
+    d2:addDays(todayStr(),2), d7:addDays(todayStr(),7), first:todayStr()}); }
+function recordResult(item, okRaw, seenAns){
+  const p=item.prob; const ok=okRaw&&!seenAns; const st=stat(p.unit); st.n++; if(ok)st.c++;
+  if(item.reviewId){
+    const m=S.mistakes.find(x=>x.id===item.reviewId);
+    if(m){ if(item.reviewStage===2){ m.d2 = ok? null : addDays(todayStr(),2); }
+      if(item.reviewStage===7){ m.d7 = ok? null : addDays(todayStr(),2); }
+      if(!m.d2&&!m.d7) S.mistakes=S.mistakes.filter(x=>x.id!==m.id); }
+  } else if(!ok){ addMistake(p); }
+  session.results.push({prob:p, ok, seenAns});
+  if(ok)session.correct++;
+  save(); }
+function renderSession(){
+  const item=session.queue[session.idx]; const p=item.prob;
+  const total=session.queue.length;
+  $("#app").innerHTML=`
+   <div class="nav"><button onclick="quitSession()">やめる</button></div>
+   <div class="card">
+    ${session.timed?'<div class="timer" id="tmr"></div>':""}
+    <div class="small">${esc(session.title)} ｜ ${session.idx+1} / ${total} 問目</div>
+    <div class="prog"><i style="width:${session.idx/total*100}%"></i></div>
+    <p><span class="tag">${UMAP[p.unit].name}</span><span class="tag lv">Lv${p.level}</span>${item.reviewId?'<span class="tag rv">間違い帳の復習</span>':""}</p>
+    <div class="q">${rich(p.q)}</div>
+    ${p.sysLines?`<div class="syswrap"><div class="sysbrace">{</div><div class="syslines">${p.sysLines.map(l=>`<div>${rich(l)}</div>`).join("")}</div></div>`:""}
+    ${p.fig?`<div class="figwrap">${p.fig}</div>`:""}
+    <div id="fields">${p.fields.map((f,i)=>`<div class="fld"><label>${rich(f.label)}</label><input class="ans" data-i="${i}" inputmode="text" autocomplete="off" placeholder="答えを入力"></div>`).join("")}</div>
+    <p class="small">分数は 3/4 のように入力できます。小数でもOKです。</p>
+    <div id="fb"></div>
+    <div id="hintArea"></div>
+    <div class="row">
+      <button class="btn sub" id="btnHint">💡 ヒント1</button>
+      <button class="btn" id="btnGrade">答え合わせ</button>
+    </div>
+    <button class="btn ghost hidden" id="btnNext">次の問題へ</button>
+   </div>`;
+  let hintStage=0, graded=false, seenAns=false;
+  const hintArea=$("#hintArea");
+  $("#btnHint").onclick=()=>{
+    if(hintStage===0){ hintArea.innerHTML=`<div class="hintbox" style="display:block">💡 ヒント1：${rich(p.hints[0])}</div>`; hintStage=1; $("#btnHint").textContent="💡 ヒント2"; }
+    else if(hintStage===1){ hintArea.innerHTML+=`<div class="hintbox" style="display:block">💡 ヒント2：${rich(p.hints[1])}</div>`; hintStage=2; $("#btnHint").textContent="📖 解説を見る"; }
+    else if(hintStage===2){ hintArea.innerHTML+=`<div class="explbox" style="display:block">📖 解説\n${rich(p.expl)}</div>`; hintStage=3; $("#btnHint").textContent="答えを見る"; }
+    else if(hintStage===3){ hintArea.innerHTML+=`<div class="ansbox" style="display:block">答え：${rich(ansText(p))}</div>`; hintStage=4; $("#btnHint").disabled=true; seenAns=true; }
+  };
+  $("#btnGrade").onclick=()=>{
+    if(graded)return;
+    const vals=p.fields.map((f,i)=>parseNum(document.querySelector(`input[data-i="${i}"]`).value));
+    if(vals.some(v=>!isFinite(v))){ $("#fb").innerHTML=`<p class="fb ng">答えを入力してから押してね。</p>`; return; }
+    graded=true;
+    let okRaw;
+    if(p.pair&&p.fields.length===2){
+      const a=vals[0], b=vals[1], x=p.fields[0].ans, y=p.fields[1].ans;
+      okRaw=(eqNum(a,x)&&eqNum(b,y))||(eqNum(a,y)&&eqNum(b,x));
+    } else okRaw=p.fields.every((f,i)=>eqNum(vals[i], f.ans));
+    recordResult(item, okRaw, seenAns);
+    const ok=okRaw&&!seenAns;
+    $("#fb").innerHTML= ok?`<p class="fb ok">⭕ 正解！</p>`
+      : `<p class="fb ng">${seenAns?"👀 答えを見たので、復習リストに入れたよ。":"❌ 残念…"} 正解は ${rich(ansText(p))}</p>
+         <div class="explbox" style="display:block">📖 解説\n${rich(p.expl)}</div>`;
+    document.querySelectorAll("input.ans").forEach(i=>i.disabled=true);
+    $("#btnGrade").disabled=true; $("#btnHint").disabled=true;
+    const nb=$("#btnNext"); nb.classList.remove("hidden");
+    nb.textContent= session.idx+1>=total?"結果を見る":"次の問題へ";
+    nb.onclick=()=>{ session.idx++; if(session.idx>=session.queue.length) finishSession(); else renderSession(); };
+  };
+  if(session.timed) startTimer();
+  const f0=document.querySelector("input.ans"); if(f0)f0.focus(); }
+function startTimer(){
+  const tick=()=>{ if(!session)return; const ms=session.deadline-Date.now();
+    const el=$("#tmr"); if(!el)return;
+    if(ms<=0){ clearInterval(session.timerId);
+      while(session.results.length<session.queue.length){ const it=session.queue[session.results.length];
+        const st=stat(it.prob.unit); st.n++; if(!it.reviewId) addMistake(it.prob);
+        session.results.push({prob:it.prob, ok:false, seenAns:false}); }
+      save(); finishSession(); return; }
+    const s=Math.ceil(ms/1000); el.textContent="⏱ 残り "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+  tick(); session.timerId=setInterval(tick,500); }
+function quitSession(){ if(session&&session.timerId)clearInterval(session.timerId); session=null; renderHome(); }
+/* ============ screens ============ */
+function renderHome(){
+  view="home"; const dl=daysLeft(); const d=composeDaily(); const dueCnt=dueReviews().length;
+  const dailyDone=d.done>=d.items.length;
+  $("#app").innerHTML=`
+   <div class="card count">
+     <div>${dl===null?'<div class="lab">入試日を設定すると<br>カウントダウンが始まります</div>':`<div class="num">${dl}</div><div class="lab">入試まで あと ${dl} 日<br>${esc(S.examDate)} が本番です</div>`}</div>
+     <div style="flex:1"></div>
+     <button class="btn sub" style="width:auto;padding:10px 14px;margin:0" onclick="renderSettings()">⚙ 設定</button>
+   </div>
+   <div class="card">
+     <h2>📅 今日の数問（${d.items.length}問）</h2>
+     ${dailyDone?`<p class="fb ok">今日の分は完了しました。おつかれさま！</p>`:`<p class="small">弱点の単元と復習を組み合わせた、今日のセットです。</p>
+     <button class="btn" onclick="startDaily()">今日のセットをはじめる</button>`}
+     ${dueCnt?`<p class="small">間違い帳から、今日が復習日の問題が ${dueCnt} 件あります（今日のセットに入っています）。</p>`:""}
+   </div>
+   <div class="card">
+     <h2>メニュー</h2>
+     <button class="btn sub" onclick="renderDrill()">📚 単元別ドリル</button>
+     <button class="btn sub" onclick="startExam()">⏱ 実戦モード（5問・8分）</button>
+     <button class="btn sub" onclick="renderMistakes()">📕 間違い帳（${S.mistakes.length}件）</button>
+     <button class="btn sub" onclick="renderGraph()">📊 弱点グラフ</button>
+   </div>
+   ${S.hist.length?`<div class="card"><h2>最近の記録</h2><table class="hist">${S.hist.slice(-7).reverse().map(h=>`<tr><td>${h.date}</td><td>${h.n}問</td><td>正解 ${h.c}問</td></tr>`).join("")}</table></div>`:""}
+   <p class="small">問題はすべてオリジナルです。記録はこの端末の中だけに保存されます。</p>`;
+  save(); }
+function startDaily(){ const d=composeDaily();
+  startSession("今日の数問", d.items.map(sp=>({unit:sp.unit, level:sp.level, reviewId:sp.reviewId, stage:sp.stage})), {daily:true}); }
+function startExam(){
+  const pool=UNITS.filter(u=>u.g===3);
+  const specs=[]; const used=new Set();
+  while(specs.length<5){ const u=pick(pool); if(used.has(u.id))continue; used.add(u.id); specs.push({unit:u.id, level:RI(2,3)}); }
+  startSession("実戦モード", specs, {timed:480}); }
+function unitRow(u, clickable){
+  const a=acc(u.id); const pct=a===null?0:Math.round(a*100);
+  const cls=a===null?"":a>=0.8?"":a>=0.5?"mid":"low";
+  return `<div class="unit" ${clickable?`onclick="startDrillUnit('${u.id}')" style="cursor:pointer"`:""}>
+    <div class="nm">${u.name}<span class="gr">中${u.g}</span></div>
+    <div class="bar">${a===null?"":`<i class="${cls}" style="width:${pct}%"></i>`}</div>
+    <div class="pc">${a===null?"未挑戦":pct+"% ("+S.stats[u.id].c+"/"+S.stats[u.id].n+")"}</div></div>`; }
+function renderDrill(){
+  view="drill";
+  $("#app").innerHTML=`<div class="nav"><button onclick="goHome()">← ホーム</button></div>
+   <div class="card"><h2>📚 単元別ドリル</h2><p class="small">単元をタップすると、レベル選択に進みます。正答率のバーが短い単元が弱点です。</p>${UNITS.map(u=>unitRow(u,true)).join("")}</div>`; }
+let drillUnit=null;
+function startDrillUnit(uid){ drillUnit=uid; const u=UMAP[uid];
+  $("#app").innerHTML=`<div class="nav"><button onclick="renderDrill()">← 単元一覧</button></div>
+   <div class="card"><h2>${u.name}（中${u.g}）</h2>
+   <p class="small">レベルを選んでください。5問出ます。</p>
+   <div class="seg">${[1,2,3,4].map(l=>`<button onclick="startDrillGo(${l})">Lv${l}</button>`).join("")}</div>
+   <p class="small">Lv1 基礎 ・ Lv2 標準 ・ Lv3 実戦 ・ Lv4 入試レベル</p></div>`; }
+function startDrillGo(lv){ const specs=Array.from({length:5},()=>({unit:drillUnit, level:lv})); startSession(UMAP[drillUnit].name+" Lv"+lv, specs, {}); }
+function renderMistakes(){
+  view="mistakes"; const t=todayStr();
+  const rows=S.mistakes.length?S.mistakes.map(m=>{ const due=(m.d2&&t>=m.d2)||(m.d7&&t>=m.d7);
+    return `<div class="mk"><b>${UMAP[m.unit].name}</b> Lv${m.level} <span class="due ${due?"":"wait"}">${due?"今日が復習日です":"次回 "+(m.d2||m.d7)+" に復習"}</span><br><span class="small">間違えた日：${m.first}／復習予定：2日後 ${m.d2||"済"} ・ 1週間後 ${m.d7||"済"}</span></div>`; }).join("")
+    : `<p class="small">間違い帳は空です。間違えた問題はここに記録され、2日後と1週間後に類題が自動で出ます。</p>`;
+  $("#app").innerHTML=`<div class="nav"><button onclick="goHome()">← ホーム</button></div>
+   <div class="card"><h2>📕 間違い帳</h2>${rows}</div>`; }
+function renderGraph(){
+  view="graph";
+  const weak=UNITS.filter(u=>acc(u.id)!==null).sort((x,y)=>acc(x.id)-acc(y.id)).slice(0,3);
+  $("#app").innerHTML=`<div class="nav"><button onclick="goHome()">← ホーム</button></div>
+   <div class="card"><h2>📊 弱点グラフ</h2>
+   ${weak.length?`<p class="small">いまの弱点：${weak.map(u=>u.name+"（"+Math.round(acc(u.id)*100)+"%）").join("、")}</p>`:`<p class="small">まだ記録がありません。ドリルや今日のセットを解くと、正答率が表示されます。</p>`}
+   ${UNITS.map(u=>unitRow(u,false)).join("")}</div>`; }
+function renderSettings(){
+  view="settings";
+  $("#app").innerHTML=`<div class="nav"><button onclick="goHome()">← ホーム</button></div>
+   <div class="card"><h2>⚙ 設定</h2>
+    <label class="small">入試の日（本番の日付）</label>
+    <input type="date" id="examDate" value="${esc(S.examDate||"")}">
+    <button class="btn" onclick="saveSettings()">保存する</button>
+    <h3>データについて</h3>
+    <p class="small">記録はこの端末のブラウザ内（localStorage）にだけ保存されます。サーバーには送信されません。</p>
+    <button class="btn ghost" onclick="if(confirm('記録をすべて消します。よろしいですか？')){try{localStorage.removeItem(LSKEY);}catch(e){} load();goHome();}">記録をすべて消す</button>
+   </div>`; }
+function saveSettings(){ S.examDate=$("#examDate").value||""; S.daily=null; save(); goHome(); }
+/* ============ boot ============ */
+try{ load(); renderHome(); window.__jukenBooted=true; }
+catch(e){ const el=document.getElementById("app");
+  if(el) el.innerHTML='<div class="card"><h2>アプリを起動できませんでした</h2><p>この表示環境では、スクリプトや保存機能（localStorage）が制限されている可能性があります。</p><p>Safari や Chrome でファイルを開くか、公開ページのURLから開いてみてください。</p><p class="small">詳細: '+String(e&&e.message||e)+'</p></div>'; }
+window.__GEN=GEN; window.__state=()=>S;
+</script>
+</body>
+</html>
