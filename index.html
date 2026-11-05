@@ -71,9 +71,12 @@ table.hist td,table.hist th{border-bottom:1px solid var(--line);padding:6px 4px;
 sup{font-size:.68em;line-height:0}
 .frac{display:inline-block;vertical-align:-0.45em;text-align:center;margin:0 .12em}
 .frac .fn{display:block;padding:0 .28em;line-height:1.25;font-size:.92em}
-.frac .fd{display:block;padding:0 .28em;line-height:1.25;font-size:.92em;border-top:1.6px solid currentColor}
-.rad{display:inline-block}
-.rad .rb{border-top:1.6px solid currentColor;padding:0 .08em 0 .02em}
+.frac .fd{display:block;padding:0 .28em;line-height:1.25;font-size:.92em;border-top:.07em solid currentColor}
+.rad{white-space:nowrap}
+.rad-root{display:inline-block}
+.rad-tall .rad-root{transform:scaleY(1.78);transform-origin:50% 88%}
+.rb{display:inline-block;line-height:1;background-image:linear-gradient(currentColor,currentColor);background-size:100% .065em;background-repeat:no-repeat;background-position:0 .145em;margin-left:-.26em;padding:0 .05em 0 .26em}
+.rad-tall .rb{padding-top:.24em;background-position:0 .17em}
 .figwrap{background:#fbfcff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0;text-align:center}
 .figwrap svg{max-width:100%;height:auto}
 .syswrap{display:flex;align-items:center;gap:6px;margin:10px 0}
@@ -119,23 +122,31 @@ function sup(n){ return String(n).split("").map(c=>SUP[c]||c).join(""); }
 /* markup: \f{num}{den} stacked fraction, \r{...} radical, ^{...} superscript.
    Also auto-converts literal ²/³ and √<digits/letter>. Latin letter runs (except "cm") become serif italic. */
 function ital(s){ return s.replace(/[A-Za-z]+/g, m => m==="cm" ? m : `<i class="mv">${m}</i>`); }
+function radSpan(body){
+  const tall = body.includes('<sup') || body.includes('class="frac"') || body.includes('rad-tall');
+  return `<span class="rad${tall ? " rad-tall" : ""}"><span class="rad-root">√</span><span class="rb">${body}</span></span>`;
+}
+function plainRich(s){
+  let t = esc(s);
+  t = ital(t);
+  t = t.replace(/√<i class="mv">([A-Za-z])<\/i>/g, (m, c) => radSpan(`<i class="mv">${c}</i>`));
+  t = t.replace(/√([0-9]+)/g, (m, d) => radSpan(d));
+  t = t.replace(/²/g, "<sup>2</sup>").replace(/³/g, "<sup>3</sup>");
+  return t;
+}
 function rich(text){
   const parts = String(text).split(/(\\f\{[^{}]*\}\{[^{}]*\}|\\q\{[^{}]*\}\{[^{}]*\}|\\r\{[^{}]*\}|\^\{[^{}]*\})/g);
   return parts.map(seg => {
     let m;
     if(m = seg.match(/^\\f\{([^{}]*)\}\{([^{}]*)\}$/))
-      return `<span class="frac"><span class="fn">${ital(esc(m[1]))}</span><span class="fd">${ital(esc(m[2]))}</span></span>`;
+      return `<span class="frac"><span class="fn">${plainRich(m[1])}</span><span class="fd">${plainRich(m[2])}</span></span>`;
     if(m = seg.match(/^\\q\{([^{}]*)\}\{([^{}]*)\}$/))
-      return `<span class="frac"><span class="fn">${ital(esc(m[1]))}</span><span class="fd">√<span class="rb">${ital(esc(m[2]))}</span></span></span>`;
+      return `<span class="frac"><span class="fn">${plainRich(m[1])}</span><span class="fd">${radSpan(plainRich(m[2]))}</span></span>`;
     if(m = seg.match(/^\\r\{([^{}]*)\}$/))
-      return `<span class="rad">√<span class="rb">${ital(esc(m[1]))}</span></span>`;
+      return radSpan(plainRich(m[1]));
     if(m = seg.match(/^\^\{([^{}]*)\}$/))
       return `<sup>${ital(esc(m[1]))}</sup>`;
-    let s = esc(seg);
-    s = ital(s);
-    s = s.replace(/√([0-9]+)/g, '<span class="rad">√<span class="rb">$1</span></span>');
-    s = s.replace(/²/g, "<sup>2</sup>").replace(/³/g, "<sup>3</sup>");
-    return s;
+    return plainRich(seg);
   }).join("");
 }
 /* ============ SVG figure helpers ============ */
