@@ -82,6 +82,29 @@ sup{font-size:.68em;line-height:0}
 .syswrap{display:flex;align-items:center;gap:6px;margin:10px 0}
 .sysbrace{font-family:"Times New Roman",serif;font-size:56px;line-height:1;transform:scaleY(1.55);font-weight:300;color:var(--ink)}
 .syslines{font-size:18px;line-height:1.9}
+
+/* ===== 計算メモ（手書きスペース）：日めくり数学と同仕様 ===== */
+.pd-sec{font-weight:700; margin:14px 0 6px; font-size:14.5px;}
+.pd-box{position:relative;}
+.pd-wrap{background:#fff; border:1.5px solid var(--line); border-radius:12px; overflow-x:auto; overflow-y:hidden; position:relative; scrollbar-width:thin;}
+#padCanvas{height:300px; display:block; touch-action:none; cursor:crosshair;
+  background-image:linear-gradient(#e7ecf7 1px, transparent 1px), linear-gradient(90deg, #e7ecf7 1px, transparent 1px); background-size:24px 24px;}
+.pd-vstrip{position:absolute; top:24px; bottom:24px; width:24px; z-index:4; touch-action:pan-y; cursor:grab;
+  background-color:rgba(29,58,138,.06);
+  background-image:radial-gradient(circle, rgba(29,58,138,.5) 2.2px, transparent 2.7px);
+  background-size:24px 22px; background-position:center 8px; background-repeat:repeat-y;}
+.pd-vstrip.left{left:0; border-right:1px dashed rgba(29,58,138,.35);}
+.pd-vstrip.right{right:0; border-left:1px dashed rgba(29,58,138,.35);}
+.pd-hstrip{position:absolute; left:0; height:24px; z-index:3; touch-action:pan-x pan-y; cursor:grab;
+  background-color:rgba(29,58,138,.06);
+  background-image:radial-gradient(circle, rgba(29,58,138,.5) 2.2px, transparent 2.7px);
+  background-size:22px 24px; background-position:8px center; background-repeat:repeat-x;}
+.pd-hstrip.top{top:0; border-bottom:1px dashed rgba(29,58,138,.35);}
+.pd-hstrip.bottom{bottom:0; border-top:1px dashed rgba(29,58,138,.35);}
+.pd-tools{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.pd-tbtn{background:#fff; border:1px solid var(--line); border-radius:9px; padding:6px 11px; font-size:13.5px; cursor:pointer; color:var(--ink);}
+.pd-tbtn.on{background:var(--navy); color:#fff; border-color:var(--navy);}
+.pd-note{color:var(--mut); font-size:13px; margin-top:6px;}
 </style>
 </head>
 <body>
@@ -764,6 +787,158 @@ function recordResult(item, okRaw, seenAns){
   session.results.push({prob:p, ok, seenAns});
   if(ok)session.correct++;
   save(); }
+
+/* ============ 計算メモ（手書きスペース） ============ */
+/* 日めくり数学と同仕様：下・左右への自動拡張、縦帯（片側・切替式）、横帯（上下・常時表示）。
+   筆跡はセッション内（その問題を表示している間）に保持する。問題はその場で生成され、
+   間違い帳の解き直しでも数値が変わるため、端末への保存はしない。 */
+const PD_MIN = 300, PD_MAX = 1800;
+let pdCanvas = null, pdCtx = null, pdWrap = null, pdItem = null;
+let pdH = PD_MIN, pdW = 0, pdOX = 0, pdDrawing = false, pdLast = null, pdTool = "pen", pdUndoStack = [];
+let pdSide = "right";
+try{ pdSide = localStorage.getItem("juken_math_pad_side") === "left" ? "left" : "right"; }catch(e){}
+function pdViewW(){ return pdWrap ? (pdWrap.clientWidth || 360) : 360; }
+function pdMaxW(){ return Math.round(pdViewW() * 3); }
+function pdSize(w, h, keepImg, keepW, keepH, keepDX, onDone){
+  const dpr = window.devicePixelRatio || 1;
+  pdW = Math.max(pdViewW(), Math.min(pdMaxW(), Math.round(w)));
+  pdH = Math.max(PD_MIN, Math.min(PD_MAX, Math.round(h)));
+  pdCanvas.style.width = pdW + "px";
+  pdCanvas.style.height = pdH + "px";
+  pdCanvas.width = Math.round(pdW * dpr);
+  pdCanvas.height = Math.round(pdH * dpr);
+  pdCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  pdCtx.lineCap = "round"; pdCtx.lineJoin = "round";
+  document.querySelectorAll(".pd-hstrip").forEach(el => { el.style.width = pdW + "px"; });
+  document.getElementById("pdNote").classList.toggle("hidden", pdH < PD_MAX);
+  if(keepImg){
+    const img = new Image();
+    img.onload = ()=>{ pdCtx.drawImage(img, keepDX || 0, 0, keepW || pdW, keepH || pdH); if(onDone) onDone(); };
+    img.src = keepImg;
+  } else if(onDone) onDone();
+}
+function pdFit(){
+  pdW = pdViewW(); pdOX = 0; pdWrap.scrollLeft = 0;
+  pdSize(pdW, PD_MIN, null, pdW, PD_MIN, 0);
+}
+function pdExtendV(){
+  if(pdH >= PD_MAX){ document.getElementById("pdNote").classList.remove("hidden"); return false; }
+  const step = Math.max(240, Math.round(window.innerHeight * 0.6));
+  const keep = pdCanvas.toDataURL();
+  const oldH = pdH;
+  pdSize(pdW, pdH + step, keep, pdW, oldH, 0);
+  requestAnimationFrame(()=>{
+    const r = pdCanvas.getBoundingClientRect();
+    if(r.bottom > window.innerHeight) window.scrollBy({ top: r.bottom - window.innerHeight + 90, behavior: "smooth" });
+  });
+  return true;
+}
+function pdExtendSide(dir){
+  const room = pdMaxW() - pdW;
+  if(room <= 0) return 0;
+  const add = Math.min(Math.round(pdViewW() * 0.6), room);
+  const keep = pdCanvas.toDataURL();
+  const oldW = pdW, oldH = pdH;
+  if(dir === "left"){
+    pdOX += add;
+    pdSize(pdW + add, pdH, keep, oldW, oldH, add);
+    pdWrap.scrollLeft += add;
+    return add;
+  }
+  pdSize(pdW + add, pdH, keep, oldW, oldH, 0);
+  return add;
+}
+function pdPos(e){
+  const r = pdCanvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function pdPushUndo(){
+  pdUndoStack.push({ url: pdCanvas.toDataURL(), h: pdH, w: pdW, ox: pdOX });
+  if(pdUndoStack.length > 25) pdUndoStack.shift();
+}
+function pdSave(){
+  if(!pdItem || !pdCanvas) return;
+  try{
+    const tmp = document.createElement("canvas");
+    const scale = Math.min(1, 800 / pdCanvas.width, 1500 / pdCanvas.height);
+    tmp.width = Math.round(pdCanvas.width * scale);
+    tmp.height = Math.round(pdCanvas.height * scale);
+    const tctx = tmp.getContext("2d");
+    tctx.fillStyle = "#ffffff"; tctx.fillRect(0, 0, tmp.width, tmp.height);
+    tctx.drawImage(pdCanvas, 0, 0, tmp.width, tmp.height);
+    pdItem.pad = { img: tmp.toDataURL("image/jpeg", 0.62), cw: pdW, ch: pdH, ox: pdOX };
+  }catch(e){ pdItem.pad = null; }
+}
+function pdApplySide(){
+  document.querySelector(".pd-vstrip.left").style.display = pdSide === "left" ? "block" : "none";
+  document.querySelector(".pd-vstrip.right").style.display = pdSide === "right" ? "block" : "none";
+  document.getElementById("pdSide").textContent = "↔ スクロール帯：" + (pdSide === "right" ? "右" : "左");
+}
+function initPad(item){
+  pdItem = item;
+  pdCanvas = document.getElementById("padCanvas");
+  if(!pdCanvas) return;
+  pdCtx = pdCanvas.getContext("2d");
+  pdWrap = pdCanvas.parentElement;
+  pdUndoStack = []; pdTool = "pen"; pdDrawing = false;
+  if(item.pad && item.pad.img){
+    pdOX = item.pad.ox || 0;
+    pdSize(item.pad.cw, item.pad.ch || PD_MIN, item.pad.img, item.pad.cw, item.pad.ch || PD_MIN, 0);
+    requestAnimationFrame(()=>{ pdWrap.scrollLeft = pdOX; });
+  } else {
+    pdFit();
+  }
+  pdApplySide();
+  pdCanvas.addEventListener("pointerdown", e=>{
+    e.preventDefault();
+    pdCanvas.setPointerCapture(e.pointerId);
+    pdPushUndo();
+    pdDrawing = true; pdLast = pdPos(e);
+    pdCtx.beginPath(); pdCtx.moveTo(pdLast.x, pdLast.y); pdCtx.lineTo(pdLast.x + 0.1, pdLast.y + 0.1);
+    pdCtx.strokeStyle = pdTool === "pen" ? "#1c2333" : "#ffffff";
+    pdCtx.lineWidth = pdTool === "pen" ? 2.6 : 16;
+    pdCtx.stroke();
+  });
+  pdCanvas.addEventListener("pointermove", e=>{
+    if(!pdDrawing) return;
+    e.preventDefault();
+    const pt = pdPos(e);
+    pdCtx.beginPath(); pdCtx.moveTo(pdLast.x, pdLast.y); pdCtx.lineTo(pt.x, pt.y);
+    pdCtx.strokeStyle = pdTool === "pen" ? "#1c2333" : "#ffffff";
+    pdCtx.lineWidth = pdTool === "pen" ? 2.6 : 16;
+    pdCtx.stroke();
+    pdLast = pt;
+    if(pt.y > pdH - 48) pdExtendV();
+    if(pt.x > pdW - 48) pdExtendSide("right");
+    else if(pt.x < 48){ const added = pdExtendSide("left"); if(added) pdLast.x += added; }
+  });
+  ["pointerup", "pointercancel"].forEach(ev => pdCanvas.addEventListener(ev, ()=>{
+    if(pdDrawing){ pdDrawing = false; pdSave(); }
+  }));
+  const pen = document.getElementById("pdPen"), era = document.getElementById("pdEraser");
+  pen.onclick = ()=>{ pdTool = "pen"; pen.classList.add("on"); era.classList.remove("on"); };
+  era.onclick = ()=>{ pdTool = "eraser"; era.classList.add("on"); pen.classList.remove("on"); };
+  document.getElementById("pdUndo").onclick = ()=>{
+    const prev = pdUndoStack.pop();
+    if(!prev) return;
+    pdOX = prev.ox || 0;
+    pdSize(prev.w || pdViewW(), prev.h, prev.url, prev.w || pdViewW(), prev.h, 0, pdSave);
+    pdWrap.scrollLeft = pdOX;
+  };
+  document.getElementById("pdClear").onclick = ()=>{
+    pdPushUndo();
+    pdCtx.clearRect(0, 0, pdW, pdH);
+    pdSave();
+  };
+  document.getElementById("pdExtend").onclick = ()=>{ pdExtendV(); };
+  document.getElementById("pdHome").onclick = ()=>{ pdWrap.scrollTo({ left: pdOX, behavior: "smooth" }); };
+  document.getElementById("pdSide").onclick = ()=>{
+    pdSide = pdSide === "right" ? "left" : "right";
+    try{ localStorage.setItem("juken_math_pad_side", pdSide); }catch(e){}
+    pdApplySide();
+  };
+}
+
 function renderSession(){
   const item=session.queue[session.idx]; const p=item.prob;
   const total=session.queue.length;
@@ -777,6 +952,18 @@ function renderSession(){
     <div class="q">${rich(p.q)}</div>
     ${p.sysLines?`<div class="syswrap"><div class="sysbrace">{</div><div class="syslines">${p.sysLines.map(l=>`<div>${rich(l)}</div>`).join("")}</div></div>`:""}
     ${p.fig?`<div class="figwrap">${p.fig}</div>`:""}
+    <div class="pd-sec">✏️ 計算メモ（指やペンで手書きできます。端まで書くと自動で広がります。点々の帯は、触って動かすための場所です）</div>
+    <div class="pd-box"><div class="pd-wrap"><canvas id="padCanvas"></canvas><div class="pd-hstrip top" title="左右へ移動（書けません）"></div><div class="pd-hstrip bottom" title="左右へ移動（書けません）"></div></div><div class="pd-vstrip left" title="スクロール用（書けません）"></div><div class="pd-vstrip right" title="スクロール用（書けません）"></div></div>
+    <div class="pd-tools">
+      <button class="pd-tbtn on" id="pdPen">✒️ ペン</button>
+      <button class="pd-tbtn" id="pdEraser">🧽 消しゴム</button>
+      <button class="pd-tbtn" id="pdUndo">↩️ 元に戻す</button>
+      <button class="pd-tbtn" id="pdClear">🗑 全消し</button>
+      <button class="pd-tbtn" id="pdExtend">⬇ スペースを広げる</button>
+      <button class="pd-tbtn" id="pdSide">↔ スクロール帯：右</button>
+      <button class="pd-tbtn" id="pdHome">⌖ 書き始めに戻る</button>
+    </div>
+    <div class="pd-note hidden" id="pdNote">スペースはここまでです（いちばん下まで広げました）。</div>
     <div id="fields">${p.fields.map((f,i)=>`<div class="fld"><label>${rich(f.label)}</label><input class="ans" data-i="${i}" inputmode="text" autocomplete="off" placeholder="答えを入力"></div>`).join("")}</div>
     <p class="small">分数は 3/4 のように入力できます。小数でもOKです。</p>
     <div id="fb"></div>
@@ -816,6 +1003,7 @@ function renderSession(){
     nb.textContent= session.idx+1>=total?"結果を見る":"次の問題へ";
     nb.onclick=()=>{ session.idx++; if(session.idx>=session.queue.length) finishSession(); else renderSession(); };
   };
+  initPad(item);
   if(session.timed) startTimer();
   const f0=document.querySelector("input.ans"); if(f0)f0.focus(); }
 function startTimer(){
